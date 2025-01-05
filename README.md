@@ -1,4 +1,4 @@
-![samhackerblog_about-me_cfbot](https://github.com/user-attachments/assets/b98a13ed-0a84-4b83-aa72-ca0df5f96162)
+<center>![samhackerblog_about-me_cfbot](https://github.com/user-attachments/assets/b98a13ed-0a84-4b83-aa72-ca0df5f96162)</center>
 
 # CfBot
 > 原 `雲羽機器人`、`CloudFeather Announcement Bot` 等名稱，因為名稱太亂，就整理一下了
