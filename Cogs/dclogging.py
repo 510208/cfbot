@@ -11,6 +11,11 @@ with open('cfg.yml', "r", encoding="utf-8") as file:
 
 logger = logging.getLogger(__name__)
 
+COG_INTRO = {
+    "name": "Discord 群組紀錄",
+    "description": "紀錄 Discord 群組的變更"
+}
+
 class DcLogging(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -304,4 +309,4 @@ class DcLogging(commands.Cog):
 
 async def setup(bot):
     await bot.add_cog(DcLogging(bot))
-    logger.info("DcLogging cog 已經註冊")
+    logger.info(f"{COG_INTRO["name"]} 已經註冊")

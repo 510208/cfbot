@@ -1,3 +1,5 @@
+# Discord 資料查詢模組
+
 import logging
 import sqlite3
 from pydactyl import PterodactylClient

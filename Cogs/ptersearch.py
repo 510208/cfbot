@@ -16,6 +16,11 @@ with open('cfg.yml', "r", encoding="utf-8") as file:
 
 logger = logging.getLogger(__name__)
 
+COG_INTRO = {
+    "name": "玩家綁定搜尋",
+    "description": "搜尋經 DiscordSRV 插件綁定的玩家資訊，並以本地 SQLite 資料庫座快取"
+}
+
 api = PterodactylClient(config["api_url"], config["api_key"], debug=True)
 
 class PteroSearch(commands.Cog):
@@ -171,4 +176,4 @@ async def setup(bot):
         logger.warning("PterSearch 模組附加功能：排程同步 已啟用")
         logger.warning(f"排程同步設定：每 {taskCfg['hours']} 小時 {taskCfg['minutes']} 分鐘 {taskCfg['seconds']} 秒")
         logger.warning("請確保您面板端的伺服器已啟用 API 功能，並且此設定不會逾越 API 限制，否則系統將可能崩潰！")
-    logger.info("PterSearch 已經註冊")
+    logger.info(f"{COG_INTRO["name"]} 已經註冊")

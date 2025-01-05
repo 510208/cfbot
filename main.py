@@ -7,6 +7,10 @@ import yaml
 import asyncio
 import platform
 import json
+import plugins.const_codes as const_codes
+
+# Project Version
+VERSION = '1.0.3'
 
 # Logging
 logging.basicConfig(
@@ -48,13 +52,14 @@ async def write_slash_synced(slash: discord.app_commands.AppCommand):
 # Cogs Slash Command
 @bot.event
 async def on_ready():
+    # 輸出歡迎訊息
     ASCII_CODE = rf"""
 ____________________________________________________
 
-         \   /|  |
-          \ / |  |  Logged in as {bot.user}
-           T  |  |  Bot ID: {bot.user.id}
-           |  \__/
+         ┌--- ┌---
+         |    ├---     Logged in as {bot.user}
+         |    |        Bot ID: {bot.user.id}
+         └--- ┴
 ____________________________________________________
 
   OS: {platform.system()} {platform.release()}
@@ -62,6 +67,9 @@ ____________________________________________________
   Discord.py Version: {discord.__version__}
   YunyuBot Version: {cfg["version"]}
   Development by 510208, Thanks for using!
+
+            Open Source with GNU 3.0 and pleasure!
+                       Developed with ❤️ by 510208
 
 """
     for line in ASCII_CODE.split('\n'):
@@ -71,6 +79,35 @@ ____________________________________________________
         logging.info(f'{guild.name} (ID: {guild.id})')
     logging.info('------')
     await bot.change_presence(activity=discord.Game(name='正在雲羽生存服搞事...'))
+    # 檢查配置檔案版本
+    logging.info('檢查配置檔案版本...')
+    if cfg['version'] != VERSION:
+        # 判斷是否為新版本
+        if cfg['version'] < VERSION:
+            logging.warning('配置檔案版本過舊，可能會導致錯誤，請更新配置檔案！')
+        else:
+            logging.warning('配置檔案版本過新，可能會導致錯誤，請更新機器人！')
+        logging.warning(f'配置檔案版本：{cfg["version"]}，機器人版本：{VERSION}')
+        logging.warning('如因配置版本不同引起的錯誤，請勿提出 Issue')
+    else:
+        logging.info('配置檔案版本正確，繼續啟動')
+        logging.info(f'配置檔案版本：{cfg["version"]}，機器人版本：{VERSION}')
+    # 檢查更新
+    if cfg['check_update']:
+        logging.info('檢查更新中...')
+        try:
+            version = await const_codes.check_version()
+            if version['latest'] != VERSION:
+                logging.warning('檢查到新版本！')
+                logging.warning(f'最新版本：{version["latest"]}')
+                logging.warning(f'請前往 {version["zip"]} 下載最新版本')
+            else:
+                logging.info('已是最新版本')
+        except Exception as e:
+            logging.error(f'檢查更新失敗：{e}')
+    else:
+        logging.info('已關閉檢查更新，繼續啟動')
+    # 同步指令
     logging.info('同步指令中...')
     slash = await bot.tree.sync()
     if slash:
@@ -79,6 +116,7 @@ ____________________________________________________
     else:
         logging.error('指令同步失敗')
 
+# Error Handler
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, CommandNotFound):
@@ -86,6 +124,7 @@ async def on_command_error(ctx, error):
         return
     raise error
 
+# Cog List Command
 @bot.tree.command(
     name='齒輪列表',
     description='列出所有Cogs資料夾中的Cogs'
@@ -136,6 +175,7 @@ async def cog_list(ctx):
     embed.set_thumbnail(url="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Engranajesreductores.JPG/240px-Engranajesreductores.JPG")
     await ctx.response.send_message(embed=embed)
 
+# Enable Cog Command
 @bot.tree.command(
     name='啟用齒輪',
     description='啟用指定的Cog'
@@ -164,6 +204,7 @@ async def enable_cog(ctx, cog: str):
         logging.error(f'發生錯誤：{e}')
         await ctx.response.send_message(f'發生錯誤：{e}')
 
+# Disable Cog Command
 @bot.tree.command(
     name='停用齒輪',
     description='停用指定的Cog'
@@ -187,6 +228,7 @@ async def disable_cog(ctx, cog: str):
         logging.error(f'發生錯誤：{e}')
         await ctx.response.send_message(f'發生錯誤：{e}')
 
+# Reload Cog Command
 @bot.tree.command(
     name='重新載入齒輪',
     description='重新載入指定的Cog'
@@ -210,6 +252,48 @@ async def reload_cog(ctx, cog: str):
         logging.error(f'發生錯誤：{e}')
         await ctx.response.send_message(f'發生錯誤：{e}')
 
+# Reload Admin Command
+@bot.tree.command(
+    name='重新載入管理員',
+    description='重新載入管理員指令'
+)
+async def reload_admin(ctx):
+    logging.info('熱重載管理員')
+    logging.info(f'請求發起人：{ctx.user}')
+    # 重新讀取配置檔案
+    with open('cfg.yml', 'r', encoding='utf-8') as f:
+        cfg = yaml.load(f, Loader=yaml.FullLoader)
+        logging.info('讀取cfg.yml成功！')
+    # 重新讀取管理員ID
+    NEW_ADMIN = cfg["admin_id"]
+    if ctx.user.id not in BOT_ADMIN and ctx.user.id not in NEW_ADMIN:
+        await ctx.response.send_message('你沒有權限使用此機器人', ephemeral=True)
+        return
+    # 尋找哪些管理員是新增的、哪些被移除了
+    new_admin = []
+    removed_admin = []
+    for admin in NEW_ADMIN:
+        if admin not in BOT_ADMIN:
+            new_admin.append(admin)
+        if admin not in NEW_ADMIN:
+            removed_admin.append(admin)
+    # 更新管理員ID
+    BOT_ADMIN = NEW_ADMIN
+    logging.info(f'新增的管理員：{new_admin}')
+    logging.info(f'被移除的管理員：{removed_admin}')
+    # 把更新與移除的管理員合併，並透過+與-號分別顯示，存成一個多行字串
+    new_admin_str = '\n'.join([f'+ {admin}' for admin in new_admin])
+    removed_admin_str = '\n'.join([f'- {admin}' for admin in removed_admin])
+    admin_str = new_admin_str + '\n' + removed_admin_str
+    try:
+        # 重新載入管理員指令
+        await bot.reload_extension('admin')
+        await ctx.response.send_message(f'已重新載入管理員，以下為更新的管理員：\n{admin_str}')
+    except Exception as e:
+        logging.error(f'發生錯誤：{e}')
+        await ctx.response.send_message(f'發生錯誤：{e}')
+
+# Help Command
 @bot.tree.command(
     name='說明',
     description='取得機器人指令的說明'
@@ -230,6 +314,7 @@ async def help(ctx):
         )
     await ctx.response.send_message(embed=embed)
 
+# Sync Slash Command
 @bot.command(
     name='sync',
     description='同步指令'

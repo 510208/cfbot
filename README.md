@@ -1,6 +1,7 @@
 ![samhackerblog_about-me_cfbot](https://github.com/user-attachments/assets/b98a13ed-0a84-4b83-aa72-ca0df5f96162)
 
-# CloudFeather Announcement Bot
+# CfBot
+> 原 `雲羽機器人`、`CloudFeather Announcement Bot` 等名稱，因為名稱太亂，就整理一下了
 
 這是一個提供給 [🪶Minecraft 雲羽伺服器](https://discord.gg/CfGvx3NQWZ) 的 Discord Bot，由服主 SamHacker 編寫。為了幫助更多人而不限於我們伺服器內部，我將此專案開源出來給大家使用
 

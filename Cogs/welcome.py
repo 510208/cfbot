@@ -11,6 +11,11 @@ with open('cfg.yml', "r", encoding="utf-8") as file:
 
 logger = logging.getLogger(__name__)
 
+COG_INTRO = {
+    "name": "歡迎訊息",
+    "description": "歡迎新使用者加入 Discord 伺服器的訊息"
+}
+
 class Welcome(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -69,4 +74,4 @@ class Welcome(commands.Cog):
 
 async def setup(bot):
     await bot.add_cog(Welcome(bot))
-    logger.info("Welcome cog 已經註冊")
+    logger.info(f"{COG_INTRO["name"]} 已經註冊")

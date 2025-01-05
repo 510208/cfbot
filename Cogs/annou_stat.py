@@ -16,8 +16,8 @@ import datetime
 logger = logging.getLogger(__name__)
 
 COG_INTRO = {
-    "name": "公告系統",
-    "description": "用於公告設定的擴充功能"
+    "name": "維修狀態",
+    "description": "用以改變維修狀態"
 }
 
 # 讀取設定檔
@@ -160,3 +160,4 @@ class AnnouStat(commands.Cog):
     
 async def setup(bot):
     await bot.add_cog(AnnouStat(bot))
+    logger.info(f"{COG_INTRO["name"]} 已經註冊")

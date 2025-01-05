@@ -11,6 +11,11 @@ with open('cfg.yml', "r", encoding="utf-8") as file:
 
 logger = logging.getLogger(__name__)
 
+COG_INTRO = {
+    "name": "自動刪除",
+    "description": "自動刪除指定頻道的多餘訊息（非本機器人與白名單的訊息）"
+}
+
 class Remove_Message(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -34,4 +39,4 @@ class Remove_Message(commands.Cog):
 
 async def setup(bot):
     await bot.add_cog(Remove_Message(bot))
-    logger.info("Remove Message cog 已經註冊")
+    logger.info(f"{COG_INTRO["name"]} 已經註冊")

@@ -10,12 +10,13 @@ from main import BOT_ADMIN
 from nltemplates import *
 import re
 import datetime
+import plugins.const_codes as const_codes
 
 logger = logging.getLogger(__name__)
 
 COG_INTRO = {
-    "name": "公告系統",
-    "description": "用於公告設定的擴充功能"
+    "name": "關於",
+    "description": "關於專案（不能移除）"
 }
 
 # 讀取設定檔
@@ -27,7 +28,7 @@ class About(commands.Cog):
     async def about(self, interaction: discord.Interaction):
         embed = discord.Embed(
             title = "關於",
-            description = "這是雲羽生存服專用的機器人\n由插件師兼伺服器工程師SamHacker搭建",
+            description = "一款開放原始碼的 Discord 機器人，透過 Python 搭建，並使用 [GNU v3.0 License](https://github.com/510208/yunyubot-dc-annou/blob/0cd1caf148e00f15ce42c84b79013b84e4dfd30e/LICENSE) 授權\n由插件師兼伺服器工程師SamHacker搭建",
             color = 0x00ff00
         )
         embed.add_field(
@@ -44,7 +45,7 @@ class About(commands.Cog):
         )
         embed.add_field(
             name = "原始碼",
-            value = "[GitHub](https://github.com/510208/yunyubot-dc-annou)"
+            value = f"[GitHub](https://github.com/510208/{const_codes.REPO_NAME})"
         )
         # 設定大頭貼
         embed.set_thumbnail(url="https://gravatar.com/avatar/f7598bd8d4aba38d7219341f81a162fc842376b3b556b1995cbb97271d9e2915?s=256")
@@ -57,3 +58,4 @@ class About(commands.Cog):
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(About(bot))
+    logger.info(f"{COG_INTRO["name"]} 已經註冊")

@@ -13,6 +13,11 @@ with open('cfg.yml', "r", encoding="utf-8") as file:
 logging.getLogger('pydactyl').setLevel(logging.INFO)
 logger = logging.getLogger(__name__)
 
+COG_INTRO = {
+    "name": "翼手龍面版輔助控制",
+    "description": "控制採用翼手龍面版（Pterdactyl）的伺服器"
+}
+
 api = PterodactylClient(config["api_url"], config["api_key"])
 
 class PteroManager(commands.Cog):
@@ -83,4 +88,4 @@ async def setup(bot):
         logger.info("載入 Pterodactyl 模組失敗，原因：在配置文件中停用了此模組")
         return
     await bot.add_cog(PteroManager(bot))
-    logger.info("Pterodactyl 已經註冊")
+    logger.info(f"{COG_INTRO["name"]} 已經註冊")
