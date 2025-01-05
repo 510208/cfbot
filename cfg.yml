@@ -19,7 +19,7 @@
 version: 1.0.3
 
 # Bot Token
-# Bot Token 請填寫在 token.txt 中，這裡不進行填寫
+token: "yourtoken.pastethere"
 
 # 是否於啟動時開啟非同步協程自動檢查更新
 check_update: true

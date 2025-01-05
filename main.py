@@ -8,6 +8,7 @@ import asyncio
 import platform
 import json
 import plugins.const_codes as const_codes
+import re
 
 # Project Version
 VERSION = '1.0.3'
@@ -368,23 +369,31 @@ async def load_extensions():
                 logging.info(f"跳過{filename}")
 
 # Start Bot
-with open('token.txt', 'r') as f:
-    token = f.readline()
-    logging.info('讀取Token成功！')
-    # logging.info(token)
+# with open('TOKEN.txt', 'r') as f:
+#     TOKEN = f.readline()
+#     logging.info('讀取TOKEN成功！')
+#     # logging.info(TOKEN)
+TOKEN = cfg['TOKEN']
+if TOKEN == '' or TOKEN == 'yourTOKEN.pastethere':
+    logging.error('TOKEN 錯誤！')
+    exit()
+if re.match(r'^([MN][\w-]{23,25})\.([\w-]{6})\.([\w-]{27,39})$', TOKEN) is None:
+    logging.warning('機器人自我檢查系統偵測到：您提供的 TOKEN 格式錯誤')
+    logging.warning('這可能導致機器人運作崩潰或出現異常，請確保您提供的 TOKEN 是正確的')
+    logging.warning('機器人不會因此而強制退出，但請注意機器人的運作狀況，以免發生異常！')
 
 async def main():
     async with bot:
         await load_extensions()
         try:
-            await bot.start(token)
+            await bot.start(TOKEN)
         except KeyboardInterrupt:
             await bot.close()
             logging.info('Bot已關閉，謝謝使用！')
             exit(0)
         except discord.LoginFailure as e:
-            logging.error('登入失敗，可能是Token錯誤')
-            logging.error('請前往 https://github.com/510208/yunyubot-dc-annou/?tab=readme-ov-file#token%E9%8C%AF%E8%AA%A4 了解更多')
+            logging.error('登入失敗，可能是TOKEN錯誤')
+            logging.error('請前往 https://github.com/510208/yunyubot-dc-annou/?tab=readme-ov-file#TOKEN%E9%8C%AF%E8%AA%A4 了解更多')
             logging.error(f'錯誤訊息：{e}')
         except discord.errors.RateLimited as e:
             logging.error('登入失敗，可能是登入次數過多')
@@ -419,3 +428,6 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         asyncio.run(close_bot())
         exit(0)
+else:
+    logging.error(f'請直接執行此 {__name__}.py 檔')
+    exit(1)
