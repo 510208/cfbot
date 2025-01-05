@@ -1,0 +1,32 @@
+name: discord message
+on:
+  release:
+    types: [published]
+jobs:
+
+  send_msg:
+    name: Send Message
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Get latest release version
+      id: get_release
+      uses: actions/github-script@v4
+      with:
+        script: |
+          const latestRelease = await github.repos.getLatestRelease({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+          });
+          return latestRelease.data.name;
+    
+    - name: send message
+      uses: appleboy/discord-action@master
+      with:
+        webhook_id: ${{ secrets.WEBHOOK_ID }}
+        webhook_token: ${{ secrets.WEBHOOK_TOKEN }}
+        color: "#48f442"
+        username: "GitHub Bot"
+        message: "雲羽機器人發布了新的版本：${{ steps.get_release.outputs.result }}"
