@@ -369,18 +369,18 @@ async def load_extensions():
                 logging.info(f"跳過{filename}")
 
 # Start Bot
-# with open('TOKEN.txt', 'r') as f:
-#     TOKEN = f.readline()
-#     logging.info('讀取TOKEN成功！')
-#     # logging.info(TOKEN)
-TOKEN = cfg['TOKEN']
-if TOKEN == '' or TOKEN == 'yourTOKEN.pastethere':
-    logging.error('TOKEN 錯誤！')
-    exit()
-if re.match(r'^([MN][\w-]{23,25})\.([\w-]{6})\.([\w-]{27,39})$', TOKEN) is None:
-    logging.warning('機器人自我檢查系統偵測到：您提供的 TOKEN 格式錯誤')
-    logging.warning('這可能導致機器人運作崩潰或出現異常，請確保您提供的 TOKEN 是正確的')
-    logging.warning('機器人不會因此而強制退出，但請注意機器人的運作狀況，以免發生異常！')
+with open('TOKEN.txt', 'r') as f:
+    TOKEN = f.readline()
+    logging.info('讀取TOKEN成功！')
+    # logging.info(TOKEN)
+# TOKEN = cfg['TOKEN']
+# if TOKEN == '' or TOKEN == 'yourTOKEN.pastethere':
+#     logging.error('TOKEN 錯誤！')
+#     exit()
+# if re.match(r'^([MN][\w-]{23,25})\.([\w-]{6})\.([\w-]{27,39})$', TOKEN) is None:
+#     logging.warning('機器人自我檢查系統偵測到：您提供的 TOKEN 格式錯誤')
+#     logging.warning('這可能導致機器人運作崩潰或出現異常，請確保您提供的 TOKEN 是正確的')
+#     logging.warning('機器人不會因此而強制退出，但請注意機器人的運作狀況，以免發生異常！')
 
 async def main():
     async with bot:
@@ -430,4 +430,4 @@ if __name__ == "__main__":
         exit(0)
 else:
     logging.error(f'請直接執行此 {__name__}.py 檔')
-    exit(1)
+    # exit(1)

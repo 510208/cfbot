@@ -309,4 +309,4 @@ class DcLogging(commands.Cog):
 
 async def setup(bot):
     await bot.add_cog(DcLogging(bot))
-    logger.info(f"{COG_INTRO["name"]} 已經註冊")
+    logger.info(f"{COG_INTRO['name']} 已經註冊")

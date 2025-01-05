@@ -39,4 +39,4 @@ class Remove_Message(commands.Cog):
 
 async def setup(bot):
     await bot.add_cog(Remove_Message(bot))
-    logger.info(f"{COG_INTRO["name"]} 已經註冊")
+    logger.info(f"{COG_INTRO['name']} 已經註冊")

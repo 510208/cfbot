@@ -26,7 +26,7 @@ class PteroManager(commands.Cog):
         logger.info("Pterodactyl 已經載入")
 
     pt = app_commands.Group(
-        name = "Pterodactyl",
+        name = "pterodactyl",
         description = "Pterodactyl 遊戲內輔助功能"
     )
 
@@ -88,4 +88,4 @@ async def setup(bot):
         logger.info("載入 Pterodactyl 模組失敗，原因：在配置文件中停用了此模組")
         return
     await bot.add_cog(PteroManager(bot))
-    logger.info(f"{COG_INTRO["name"]} 已經註冊")
+    logger.info(f"{COG_INTRO['name']} 已經註冊")

@@ -154,9 +154,9 @@ class PteroSearch(commands.Cog):
 
     # 定義排程
     @tasks.loop(
-        hours = taskCfg["hours"],
-        minutes = taskCfg["minutes"],
-        seconds = taskCfg["seconds"]
+        hours = taskCfg["interval"]["hours"],
+        minutes = taskCfg["interval"]["minutes"],
+        seconds = taskCfg["interval"]["seconds"]
     )
     async def syncDcSrv(self):
         if not taskCfg["enabled"]:
@@ -176,4 +176,4 @@ async def setup(bot):
         logger.warning("PterSearch 模組附加功能：排程同步 已啟用")
         logger.warning(f"排程同步設定：每 {taskCfg['hours']} 小時 {taskCfg['minutes']} 分鐘 {taskCfg['seconds']} 秒")
         logger.warning("請確保您面板端的伺服器已啟用 API 功能，並且此設定不會逾越 API 限制，否則系統將可能崩潰！")
-    logger.info(f"{COG_INTRO["name"]} 已經註冊")
+    logger.info(f"{COG_INTRO['name']} 已經註冊")

@@ -19,7 +19,8 @@
 version: 1.0.3
 
 # Bot Token
-token: "yourtoken.pastethere"
+# token: "yourtoken.pastethere"
+# Token 請撰寫於 token.txt 檔案中，以避免洩漏
 
 # 是否於啟動時開啟非同步協程自動檢查更新
 check_update: true
