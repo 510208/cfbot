@@ -347,26 +347,31 @@ async def sync(ctx):
     # 正確的調用方式
     await mes.edit(content="完成同步！", embed=embed)
 
-# 一開始bot開機需載入全部程式檔案
-async def load_extensions():
-    for filename in os.listdir("./Cogs"):
-        if filename.endswith(".py") and not(filename.startswith("nl")):
-            try:
-                logging.info(f"載入{filename}中...")
-                await bot.load_extension(f"Cogs.{filename[:-3]}")
-                logging.info(f"載入{filename}成功")
-                logging.getLogger(f'Cogs.{filename}').setLevel(logging.INFO)
-            except NoEntryPointError as e:
-                logging.error(f"載入{filename}失敗，原因：無子程式加載切入點")
-                continue
-            except Exception as e:
-                logging.error(f"載入{filename}失敗：{e}")
-                continue
-        else:
-            if filename.startswith("nl"):
-                logging.info(f"跳過{filename}, 原因：採用nl方式跳過載入")
+# 一開始bot開機需載入全部程式檔案，並且跳過nl開頭的檔案。
+# 載入範圍包含Cogs資料夾與其子資料夾，但不包含子資料夾中的子資料夾。
+async def load_extensions(bot):
+    """Loads cogs from the 'Cogs' directory and its subdirectories, skipping files starting with 'nl'."""
+    for root, _, files in os.walk("./Cogs"):
+        for filename in files:
+            if filename.endswith(".py") and not filename.startswith("nl"):
+                relative_path = os.path.relpath(os.path.join(root, filename), "./")  # Get the path relative to the root directory.
+                module_name = relative_path.replace(os.sep, '.')[:-3]  # Convert to module path, and remove ".py".
+                try:
+                    logging.info(f"載入 {relative_path} 中...")
+                    await bot.load_extension(module_name)
+                    logging.info(f"載入 {relative_path} 成功")
+                    logging.getLogger(module_name).setLevel(logging.INFO)
+                except NoEntryPointError as e:
+                    logging.error(f"載入 {relative_path} 失敗，原因：無子程式加載切入點")
+                    continue
+                except Exception as e:
+                    logging.error(f"載入 {relative_path} 失敗：{e}")
+                    continue
             else:
-                logging.info(f"跳過{filename}")
+                if filename.startswith("nl"):
+                    logging.info(f"跳過 {filename}，原因：採用nl方式跳過載入")
+                else:
+                    logging.info(f"跳過 {filename}")
 
 # Start Bot
 with open('TOKEN.txt', 'r') as f:
@@ -384,7 +389,7 @@ with open('TOKEN.txt', 'r') as f:
 
 async def main():
     async with bot:
-        await load_extensions()
+        await load_extensions(bot)
         try:
             await bot.start(TOKEN)
         except KeyboardInterrupt:

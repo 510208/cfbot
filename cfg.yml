@@ -261,3 +261,27 @@ ptersearch:
       seconds: 0              # 每幾秒更新一次
       minutes: 0              # 每幾分鐘更新一次
       hours: 20                # 每幾小時更新一次
+
+# ================================
+#  ○ 客服單系統
+#  齒輪：tickets/...
+# ================================
+tickets:
+  enabled: true                  # 是否啟用客服單系統
+  category_id: 1190290928112517212       # 客服單分類ID
+  log_channel_id: 1190298140692185128    # 客服單紀錄頻道ID
+  staff_role_id:                         # 客服人員角色ID
+  - 1190291336750960773
+  messages:                          # 訊息相關設定，暫時不提供按鈕內容、通知等的修改，因為容易造成問題
+    new_ticket: "你的客服單已創建，請在下方開始說明你的需求。"       # 新客服單訊息
+    close_ticket: "客服單已關閉。"     # 關閉客服單訊息
+    error: "⚠錯誤"               # 錯誤訊息
+    retry: "發生了錯誤，請重新試試"                 # 重試訊息
+    ticket_exists: "⚠你已有開啟客服單"       # 已開啟客服單訊息
+    success: "✅成功"             # 成功訊息
+    close_ticket_confirm: "確定要關閉客服單嗎？"     # 關閉客服單確認訊息
+    running: "執行中..."           # 執行中訊息
+  embed_text:
+    ticket: "客服單"
+    close_ticket: "關閉客服單"
+    open_ticket: "開啟客服單"
