@@ -1,8 +1,8 @@
 <p align="center"><img src="https://github.com/user-attachments/assets/debe6451-5a5a-4867-a4ba-979eb924eb1e" width="400px"></p>
 
-<p align="center">
-# CfBot
-</p>
+<h1 align="center"><strong>
+CfBot
+</strong></h1>
 
 > 原 `雲羽機器人`、`CloudFeather Announcement Bot` 等名稱，因為名稱太亂，就整理一下了
 
