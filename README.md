@@ -1,9 +1,12 @@
 <p align="center"><img src="https://github.com/user-attachments/assets/debe6451-5a5a-4867-a4ba-979eb924eb1e" width="400px"></p>
 
-<p align="center">
-# CfBot
-</p>
+<h1 align="center"><strong>
+CfBot
+</strong></h1>
+
 > 原 `雲羽機器人`、`CloudFeather Announcement Bot` 等名稱，因為名稱太亂，就整理一下了
+
+[![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner2-direct.svg)](https://stand-with-ukraine.pp.ua)
 
 這是一個提供給 [🪶Minecraft 雲羽伺服器](https://discord.gg/CfGvx3NQWZ) 的 Discord Bot，由服主 SamHacker 編寫。為了幫助更多人而不限於我們伺服器內部，我將此專案開源出來給大家使用
 
