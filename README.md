@@ -4,6 +4,21 @@
 CfBot
 </strong></h1>
 
+<p align="center">
+   <a href="https://discord.gg/CWCjhRGJ2e">
+      <img src="https://github.com/user-attachments/assets/b98f0cdb-b224-4cea-a12f-f1a72ecc5260" width="150px">
+   </a>
+   <a href="https://github.com/510208">
+      <img src="https://github.com/user-attachments/assets/f4c073e0-0bde-4d1e-91e9-0b384fc2ca54" width="150px">
+   </a>
+   <a href="https://discordpy.readthedocs.io/">
+      <img src="https://github.com/user-attachments/assets/21ac2c4d-3ad9-44fe-a2ff-40914c3d2e30" width="150px">
+   </a>
+   <a href="https://github.com/510208/cfbot">
+      <img src="https://github.com/user-attachments/assets/5ef90eeb-5127-435f-89ab-e4e1fe46e2ac" width="150px">
+   </a>
+</p>
+
 > 原 `雲羽機器人`、`CloudFeather Announcement Bot` 等名稱，因為名稱太亂，就整理一下了
 
 [![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner2-direct.svg)](https://stand-with-ukraine.pp.ua)
