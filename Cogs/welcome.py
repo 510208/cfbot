@@ -69,7 +69,7 @@ class Welcome(commands.Cog):
             description = fmt,
             color = discord.Color.red()
         )
-        embed.set_thumbnail(url=member.avatar_url)
+        embed.set_thumbnail(url=member.avatar.url)
         await channel.send(embed=embed)
 
 async def setup(bot):

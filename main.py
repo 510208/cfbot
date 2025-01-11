@@ -7,6 +7,7 @@ import yaml
 import asyncio
 import platform
 import json
+# from Cogs.tickets.ticket import SELF_PATH
 import plugins.const_codes as const_codes
 import re
 
@@ -34,8 +35,12 @@ BOT_ADMIN = cfg["admin_id"]
 # Bot
 bot = commands.Bot(command_prefix='sh!', intents=discord.Intents.all())
 
+# 寫入已同步的指令
 async def write_slash_synced(slash: discord.app_commands.AppCommand):
-    with open('slash.json', 'w') as f:
+    SELF_PATH = os.path.dirname(os.path.abspath(__file__))
+    FILE_NAME = 'slash.json'
+    FILE_PATH = os.path.join(SELF_PATH, FILE_NAME)
+    with open(FILE_PATH, 'w') as f:
         # 取得所有指令與其說明，並存入陣列中
         logging.info('寫入指令同步資料')
         slash = []
@@ -47,7 +52,7 @@ async def write_slash_synced(slash: discord.app_commands.AppCommand):
             })
         
         logging.debug(f'指令同步資料：{slash}')
-        json.dump(slash, f)
+        json.dump(slash, f, indent = 4)
         logging.info('指令同步資料寫入成功')
 
 # Cogs Slash Command
@@ -242,7 +247,22 @@ async def reload_cog(ctx, cog: str):
         return
     try:
         # 檢查是否有該Cog
-        if os.path.isfile(f'./Cogs/{cog}.py') == False:
+        # 取得檔案絕對路徑
+        SELF_PATH = os.path.dirname(os.path.abspath(__file__))
+        logging.debug(f'檔案絕對路徑：{SELF_PATH}')
+        # 檢查使用者請求的Cog是否為子資料夾（如tickets/ticket）
+        if '/' in cog:
+            logging.debug('使用者請求的Cog為子資料夾')
+            # 取得子資料夾名稱
+            sub_cog = cog.split('/')[0]
+            logging.debug(f'子資料夾名稱：{sub_cog}')
+            # 檢查是否有該子資料夾
+            if os.path.isdir(f'./Cogs/{sub_cog}') == False:
+                await ctx.response.send_message('找不到該Cog')
+                return
+        # 檢查是否有該Cog
+        if not os.path.isfile(f'./Cogs/{cog}.py'):
+            logging.debug('使用者請求的Cog為子資料夾')
             await ctx.response.send_message('找不到該Cog')
             return
         
@@ -251,7 +271,10 @@ async def reload_cog(ctx, cog: str):
         await ctx.response.send_message(f'已重新載入{cog}')
     except Exception as e:
         logging.error(f'發生錯誤：{e}')
-        await ctx.response.send_message(f'發生錯誤：{e}')
+        if ctx.response.is_done():
+            await ctx.followup.send(f'發生錯誤：{e}')
+        else:
+            await ctx.response.send_message(f'發生錯誤：{e}')
 
 # Reload Admin Command
 @bot.tree.command(
@@ -374,10 +397,14 @@ async def load_extensions(bot):
                     logging.info(f"跳過 {filename}")
 
 # Start Bot
-with open('TOKEN.txt', 'r') as f:
-    TOKEN = f.readline()
-    logging.info('讀取TOKEN成功！')
-    # logging.info(TOKEN)
+try:
+    with open('TOKEN.txt', 'r') as f:
+        TOKEN = f.readline()
+        logging.info('讀取TOKEN成功！')
+        # logging.info(TOKEN)
+except FileNotFoundError:
+    logging.error('找不到 TOKEN.txt！請照 README.md 的步驟取得 TOKEN 並建立該文件')
+    exit(1)
 # TOKEN = cfg['TOKEN']
 # if TOKEN == '' or TOKEN == 'yourTOKEN.pastethere':
 #     logging.error('TOKEN 錯誤！')

@@ -7,3 +7,8 @@ __pycache__/*
 
 *.pyc
 token.txt
+
+data.json
+
+history/*
+Cogs/tickets/history/*

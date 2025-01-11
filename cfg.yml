@@ -38,8 +38,10 @@ annou_channel_id: 0000000000000000000
 
 # 管理員 Discord ID
 admin_id:
+  - 959977374471028779
   - 0000000000000000000
-  - 0000000000000000000
+
+# 管理員身分組 ID
 
 # ================================
 #  ○ 公告格式設定
@@ -268,14 +270,24 @@ ptersearch:
 # ================================
 tickets:
   enabled: true                  # 是否啟用客服單系統
+  remove_log_when_bot_launch: true      # 機器人啟動時是否刪除客服單紀錄
   ticket_panel_id: 1327254407443775510   # 客服單面板頻道ID
   category_id: 1327254276753330196       # 客服單分類ID
   log_channel_id: 1327254390137946202    # 客服單紀錄頻道ID
   staff_role_id:                         # 客服人員角色ID
-  - 1190291336750960773
+  - 1186541054514704434
+  confirm_message_expired: 10            # 確認訊息過期時間（秒）
+  allow_call_staff: true                 # 是否允許呼叫客服
+  
+  # 按鈕文字
   button_texts:
     new_ticket: "📝 開啟客服單"      # 開啟客服單按鈕
     close_ticket: "🔒 關閉客服單"    # 關閉客服單按鈕
+    call_staff: "🔔 呼叫客服"        # 呼叫客服按鈕
+    confirm: "✅ 確認"              # 確認按鈕
+    cancel: "❌ 取消"               # 取消按鈕
+
+  # 訊息設定
   messages:                          # 訊息相關設定，暫時不提供按鈕內容、通知等的修改，因為容易造成問題
     new_ticket: "你的客服單已創建，請在下方開始說明你的需求。"       # 新客服單訊息
     close_ticket: "客服單已關閉。"     # 關閉客服單訊息
@@ -285,6 +297,10 @@ tickets:
     success: "✅成功"             # 成功訊息
     close_ticket_confirm: "確定要關閉客服單嗎？"     # 關閉客服單確認訊息
     running: "執行中..."           # 執行中訊息
+    is_not_ticket: "此頻道不是一個客服單"       # 頻道非客服單時的訊息
+    no_permission: "你沒有權限這麼做"         # 沒有權限時的訊息
+
+  # 多行訊息
   multiline_messages:
     # 你可以使用以下 Placeholder：
     # {user} - 用戶名稱（不提及）
@@ -298,7 +314,23 @@ tickets:
       歡迎 {user_mention} 開啟客服單！
       請在下方開始說明你的需求。
       有任何問題，請隨時提問。
+
+    call_staff: |
+      {staff_mention} 有人呼叫客服！
+      請盡快前往 {channel_mention} 處理。
+
+  # 嵌入文字
   embed_text:
-    ticket: "客服單"
-    close_ticket: "關閉客服單"
-    open_ticket: "開啟客服單"
+    mainmenu:
+      title: "客服單"
+      description: |
+        歡迎使用客服單系統！
+        你可以在這裡開啟新的客服單，或是關閉現有的客服單。
+        如果你有任何問題，請隨時提問。
+
+      color: 0x00ff00
+    
+    ticket_panel:
+      title: "客服單"
+      description: "點擊下方按鈕開啟新的客服單。"
+      color: 0x00ff00
