@@ -46,7 +46,16 @@ CfBot
 > 
 > 請記得，安裝時必須要勾選 `Add Python 3.x to PATH`，否則待會的操作會很麻煩喔...
 2. 安裝完成後，你可以在網頁最上面有綠色`<> Code`按紐，按下它之後點選"Download ZIP"（在最下方），下載後解壓縮
-   （Zip格式可以用Windows 10以上的系統解壓）
+   （Zip格式可以用Windows 10以上的系統解壓），或是使用以下兩個按鈕下載發行版與開發中版本
+
+
+<a href="https://github.com/510208/cfbot/releases/latest">
+   <img src="https://github.com/user-attachments/assets/9b0f058e-e3c6-4451-8de8-b19f947291d0" width="150px">
+</a>
+<a href="https://github.com/510208/cfbot">
+   <img src="https://github.com/user-attachments/assets/5d6ab893-d9ab-48f2-bb73-55be590412b4" width="150px">
+</a>
+
 3. 按住Shift鍵並在資料夾中右鍵，選擇"使用PowerShell開啟"
 4. 會跳出一個看起來很複雜的視窗，不用怕，直接貼上下面這段就好，記得一行一行貼：
 ```shell
