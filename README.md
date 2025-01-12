@@ -23,6 +23,9 @@ CfBot
 
 [![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner2-direct.svg)](https://stand-with-ukraine.pp.ua)
 
+> [!IMPORTANT]  
+> 本機器人為 [510208](https://github.com/510208) 為雲羽生存服開發的機器人，專案所有權仍為 510208 所有，因此即使雲羽生存服關閉，你也仍然可以使用它！
+
 這是一個提供給 [🪶Minecraft 雲羽伺服器](https://discord.gg/CfGvx3NQWZ) 的 Discord Bot，由服主 SamHacker 編寫。為了幫助更多人而不限於我們伺服器內部，我將此專案開源出來給大家使用
 
 ## 💻 如何部署？
