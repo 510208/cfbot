@@ -25,6 +25,7 @@ class Auto_Reply(commands.Cog):
         logger.info("Remove Message cog 已經載入")
 
     def _format_response(self, rule_response, message):
+        """格式化回覆訊息"""
         return rule_response.format(
             message=message.content,  # 訊息內容
             author=message.author.name,  # 訊息發送者
