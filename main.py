@@ -19,11 +19,46 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(lineno)d: [%(asctime)s][%(levelname)s] - [%(module)s] %(message)s'
 )
-logging.getLogger('discord').setLevel(logging.INFO)
+
+logging.getLogger('discord').setLevel(logging.WARNING)
+logging.getLogger('logging').setLevel(logging.WARNING)
+logging.getLogger('plugins.const_codes').setLevel(logging.WARNING)
+logging.getLogger('asyncio').setLevel(logging.WARNING)
+logging.getLogger('json').setLevel(logging.WARNING)
+logging.getLogger('yaml').setLevel(logging.WARNING)
 
 with open('cfg.yml', 'r', encoding='utf-8') as f:
     cfg = yaml.load(f, Loader=yaml.FullLoader)
     logging.info('讀取cfg.yml成功！')
+
+if cfg['debug']:
+    logging.getLogger().setLevel(logging.DEBUG)
+    logging.getLogger('discord').setLevel(logging.DEBUG)
+    logging.getLogger('logging').setLevel(logging.DEBUG)
+    logging.getLogger('plugins.const_codes').setLevel(logging.DEBUG)
+    logging.getLogger('asyncio').setLevel(logging.DEBUG)
+    logging.getLogger('json').setLevel(logging.DEBUG)
+    logging.getLogger('yaml').setLevel(logging.DEBUG)
+    WARNING_MSG = """
+____!___!___!___!___!___!___!___!___!____
+
+    W A R N I N G ! ! !
+
+  您已啟用除錯模式，可能會看到更多詳細資訊
+  本模式給予開發人員更大的彈性，但也可能
+  會對您的隱私造成風險，請注意！
+
+  您可以在cfg.yml中關閉除錯模式
+  請注意，除錯模式可能會對機器人造成影響，
+  請僅在開發環境中或需要除厝時啟動除錯模式，
+  如果你不知道除錯模式的風險，請勿啟動除錯模式  
+
+  請勿將除錯模式開啟於正式環境
+____!___!___!___!___!___!___!___!___!____
+"""
+    for line in WARNING_MSG.split('\n'):
+        logging.warning(line)
+
 # 檢查錯誤狀態
 if cfg is None:
     logging.error('cfg.yml為空！')
@@ -71,15 +106,38 @@ ____________________________________________________
   OS: {platform.system()} {platform.release()}
   Python Version: {platform.python_version()}
   Discord.py Version: {discord.__version__}
-  YunyuBot Version: {cfg["version"]}
+  CFBot Version: {cfg["version"]}
   Development by 510208, Thanks for using!
 
             Open Source with GNU 3.0 and pleasure!
                        Developed with ❤️ by 510208
 
 """
-    for line in ASCII_CODE.split('\n'):
-        logging.info(line)
+    DEBG_CODE = rf"""
+____________________________________________________
+
+         ┌--- ┌---
+         |    ├---     Logged in as {bot.user}
+         |    |        Bot ID: {bot.user.id}
+         └--- ┴  d     Working in Debug Mode!!
+____________________________________________________
+
+  OS: {platform.system()} {platform.release()}
+  Python Version: {platform.python_version()}
+  Discord.py Version: {discord.__version__}
+  CFBot Version: {cfg["version"]}
+  Development by 510208, Thanks for using!
+
+            Open Source with GNU 3.0 and pleasure!
+                       Developed with ❤️ by 510208
+
+"""
+    if cfg['debug']:
+        for line in DEBG_CODE.split('\n'):
+            logging.info(line)
+    else:
+        for line in ASCII_CODE.split('\n'):
+            logging.info(line)
     logging.info('------')
     for guild in bot.guilds:
         logging.info(f'{guild.name} (ID: {guild.id})')

@@ -61,26 +61,32 @@ class Auto_Reply(commands.Cog):
         for rule in rules:
             # 檢查是否符合規則
             # 先檢查是否啟用正規表示式匹配
+            logger.debug(f"正在檢查規則：{rule}，是否啟用正規表示式匹配：{rule['match_regex']}")
             if rule['match_regex']:
+                logger.debug(f"正在使用正規表示式匹配，匹配結果：{re.search(rule['trigger'], message.content)}")
                 if not re.search(rule['trigger'], message.content):
-                    return
-                # 檢查是否啟用no_reply
+                    continue
                 if rule['no_reply']:
-                    await message.channel.send(self._format_response(self, rule['response'], message))
+                    # 照ephemeral中的布林值指定是否為私人訊息
+                    m = await message.channel.send(self._format_response(rule['response'], message))
                     logger.info(f"自動回覆: {message.author.name} 在 {message.guild.name} 的 {message.channel.name} 頻道中觸發了自動回覆")
-                else:
-                    await message.reply(self._format_response(self, rule['response'], message))
-                    logger.info(f"自動回覆: {message.author.name} 在 {message.guild.name} 的 {message.channel.name} 頻道中觸發了自動回覆")
-            else:
-                if not rule['trigger'] in message.content:
                     return
-                # 檢查是否啟用no_reply
-                if rule['no_reply']:
-                    await message.channel.send(self._format_response(rule['response'], message))
-                    logger.info(f"自動回覆: {message.author.name} 在 {message.guild.name} 的 {message.channel.name} 頻道中觸發了自動回覆")
                 else:
                     await message.reply(self._format_response(rule['response'], message))
                     logger.info(f"自動回覆: {message.author.name} 在 {message.guild.name} 的 {message.channel.name} 頻道中觸發了自動回覆")
+                    return
+            else:
+                logger.debug(f"正在使用一般模式匹配，匹配結果：{re.search(rule['trigger'], message.content)}")
+                if not rule['trigger'] in message.content:
+                    continue
+                if rule['no_reply']:
+                    await message.channel.send(self._format_response(rule['response'], message))
+                    logger.info(f"自動回覆: {message.author.name} 在 {message.guild.name} 的 {message.channel.name} 頻道中觸發了自動回覆")
+                    return
+                else:
+                    await message.reply(self._format_response(rule['response'], message))
+                    logger.info(f"自動回覆: {message.author.name} 在 {message.guild.name} 的 {message.channel.name} 頻道中觸發了自動回覆")
+                    return
 
 async def setup(bot):
     if not config['enabled']:

@@ -25,6 +25,10 @@ version: 1.0.4
 # 是否於啟動時開啟非同步協程自動檢查更新
 check_update: true
 
+# 是否啟動除錯模式
+# 在除錯模式下，機器人會顯示更多的除錯訊息，並啟動引入模組的除錯模式（降低它們的除錯等級至DEBUG，預設為WARNING）
+debug: false
+
 # ================================
 #  ○ 公告程式設定
 #  齒輪：annou.py
@@ -369,8 +373,8 @@ auto_reply:
     # {channel_id} - 自動回覆觸發頻道ID
     # {guild} - 自動回覆觸發伺服器名稱
     # {guild_id} - 自動回覆觸發伺服器ID
-    - trigger: "你好"            # 觸發字串
+    - trigger: "hello"            # 觸發字串
       response: |         # 回覆內容
-        你好！
+        Hello World
       match_regex: false          # 是否使用正則表達式匹配
       no_reply: false             # 設為true，則不使用回覆，而是直接傳送訊息
