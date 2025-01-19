@@ -35,7 +35,9 @@ class Remove_Message(commands.Cog):
                     message=message.content
                 )
                 await message.author.send(msg)
+                logger.info(f"已經私訊 {message.author.name} 關於在 {message.guild.name} 的訊息")
             await message.delete()
+            logger.info(f"已經刪除 {message.author.name} 在 {message.guild.name} 的訊息")
 
 async def setup(bot):
     await bot.add_cog(Remove_Message(bot))

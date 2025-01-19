@@ -53,7 +53,7 @@ class Auto_Reply(commands.Cog):
         # 是否為指定成員，或在指定身分組中
         # 取得訊息發送者的所有身分組ID
         roles = [role.id for role in message.author.roles]
-        if message.author.id in ignore['ignore_members'] or \
+        if message.author.id in ignore['ignore_users'] or \
         any(role in ignore['ignore_roles'] for role in roles):
             return
         
@@ -67,16 +67,20 @@ class Auto_Reply(commands.Cog):
                 # 檢查是否啟用no_reply
                 if rule['no_reply']:
                     await message.channel.send(self._format_response(self, rule['response'], message))
+                    logger.info(f"自動回覆: {message.author.name} 在 {message.guild.name} 的 {message.channel.name} 頻道中觸發了自動回覆")
                 else:
                     await message.reply(self._format_response(self, rule['response'], message))
+                    logger.info(f"自動回覆: {message.author.name} 在 {message.guild.name} 的 {message.channel.name} 頻道中觸發了自動回覆")
             else:
                 if not rule['trigger'] in message.content:
                     return
                 # 檢查是否啟用no_reply
                 if rule['no_reply']:
                     await message.channel.send(self._format_response(rule['response'], message))
+                    logger.info(f"自動回覆: {message.author.name} 在 {message.guild.name} 的 {message.channel.name} 頻道中觸發了自動回覆")
                 else:
                     await message.reply(self._format_response(rule['response'], message))
+                    logger.info(f"自動回覆: {message.author.name} 在 {message.guild.name} 的 {message.channel.name} 頻道中觸發了自動回覆")
 
 async def setup(bot):
     if not config['enabled']:
