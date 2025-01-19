@@ -12,7 +12,7 @@ import plugins.const_codes as const_codes
 import re
 
 # Project Version
-VERSION = '1.0.3'
+VERSION = '1.0.4'
 
 # Logging
 logging.basicConfig(

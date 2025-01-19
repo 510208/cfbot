@@ -16,7 +16,7 @@
 # 這個版本號會顯示在機器人的狀態中，非開發人員請勿更改！
 # 本配置與程式版本不同可能會導致程式崩潰！
 # 如果你不知道你在做什麼，請不要更改這個設定！
-version: 1.0.3
+version: 1.0.4
 
 # Bot Token
 # token: "yourtoken.pastethere"
