@@ -334,3 +334,43 @@ tickets:
       title: "客服單"
       description: "點擊下方按鈕開啟新的客服單。"
       color: 0x00ff00
+
+# ================================
+#  ○ 自動回覆
+#  齒輪：auto_reply.py
+# ================================
+auto_reply:
+  enabled: true                  # 是否啟用自動回覆
+
+  # 如果符合以下規則，就跳過自動回覆該則訊息
+  ignore_rules:
+    ignore_bots: true           # 忽略機器人
+    ignore_self: true           # 忽略自己
+    ignore_roles:               # 忽略的身分組
+      - 0000000000000000000
+    ignore_users:               # 忽略的用戶
+      - 0000000000000000000
+    ignore_channels:            # 忽略的頻道
+      - 0000000000000000000
+
+  # 回覆規則設定
+  rules:
+    # 這是一個範例規則，你可以根據這個規則添加更多規則，如果沒有規則會自動跳過
+    # 建議將重要的規則放在前面，以避免被其他規則覆蓋
+    # 請注意，這裡的規則是按照順序進行的，如果有多個規則符合，將使用第一個符合的規則
+    # 如果缺乏設定項，將以預設值進行處理
+    # 你可以使用以下Placeholder：
+    # {message} - 觸發者發送的訊息內容
+    # {author} - 自動回覆觸發者名稱
+    # {author_mention} - 自動回覆觸發者提及
+    # {author_id} - 自動回覆觸發者ID
+    # {channel} - 自動回覆觸發頻道名稱
+    # {channel_mention} - 自動回覆觸發頻道提及
+    # {channel_id} - 自動回覆觸發頻道ID
+    # {guild} - 自動回覆觸發伺服器名稱
+    # {guild_id} - 自動回覆觸發伺服器ID
+    - trigger: "你好"            # 觸發字串
+      response: |         # 回覆內容
+        你好！
+      match_regex: false          # 是否使用正則表達式匹配
+      no_reply: false             # 設為true，則不使用回覆，而是直接傳送訊息
