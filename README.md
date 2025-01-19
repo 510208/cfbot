@@ -4,9 +4,27 @@
 CfBot
 </strong></h1>
 
+<p align="center">
+   <a href="https://discord.gg/CWCjhRGJ2e">
+      <img src="https://github.com/user-attachments/assets/b98f0cdb-b224-4cea-a12f-f1a72ecc5260" width="150px">
+   </a>
+   <a href="https://github.com/510208">
+      <img src="https://github.com/user-attachments/assets/f4c073e0-0bde-4d1e-91e9-0b384fc2ca54" width="150px">
+   </a>
+   <a href="https://discordpy.readthedocs.io/">
+      <img src="https://github.com/user-attachments/assets/21ac2c4d-3ad9-44fe-a2ff-40914c3d2e30" width="150px">
+   </a>
+   <a href="https://github.com/510208/cfbot">
+      <img src="https://github.com/user-attachments/assets/5ef90eeb-5127-435f-89ab-e4e1fe46e2ac" width="150px">
+   </a>
+</p>
+
 > 原 `雲羽機器人`、`CloudFeather Announcement Bot` 等名稱，因為名稱太亂，就整理一下了
 
 [![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner2-direct.svg)](https://stand-with-ukraine.pp.ua)
+
+> [!IMPORTANT]  
+> 本機器人為 [510208](https://github.com/510208) 為雲羽生存服開發的機器人，專案所有權仍為 510208 所有，因此即使雲羽生存服關閉，你也仍然可以使用它！
 
 這是一個提供給 [🪶Minecraft 雲羽伺服器](https://discord.gg/CfGvx3NQWZ) 的 Discord Bot，由服主 SamHacker 編寫。為了幫助更多人而不限於我們伺服器內部，我將此專案開源出來給大家使用
 
@@ -31,7 +49,16 @@ CfBot
 > 
 > 請記得，安裝時必須要勾選 `Add Python 3.x to PATH`，否則待會的操作會很麻煩喔...
 2. 安裝完成後，你可以在網頁最上面有綠色`<> Code`按紐，按下它之後點選"Download ZIP"（在最下方），下載後解壓縮
-   （Zip格式可以用Windows 10以上的系統解壓）
+   （Zip格式可以用Windows 10以上的系統解壓），或是使用以下兩個按鈕下載發行版與開發中版本
+
+
+<a href="https://github.com/510208/cfbot/releases/latest">
+   <img src="https://github.com/user-attachments/assets/9b0f058e-e3c6-4451-8de8-b19f947291d0" width="150px">
+</a>
+<a href="https://github.com/510208/cfbot">
+   <img src="https://github.com/user-attachments/assets/5d6ab893-d9ab-48f2-bb73-55be590412b4" width="150px">
+</a>
+
 3. 按住Shift鍵並在資料夾中右鍵，選擇"使用PowerShell開啟"
 4. 會跳出一個看起來很複雜的視窗，不用怕，直接貼上下面這段就好，記得一行一行貼：
 ```shell
