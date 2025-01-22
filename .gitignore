@@ -12,3 +12,15 @@ data.json
 
 history/*
 Cogs/tickets/history/*
+
+# Python specific files
+__pycache__/
+*.pyc
+
+# PDM specific files
+.pdm-python
+.pdm.toml
+.pdm-lock.yaml
+
+# Environment files
+.env

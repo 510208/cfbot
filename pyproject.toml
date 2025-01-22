@@ -1,0 +1,25 @@
+[project]
+name = "cfbot"
+version = "1.0.4"
+description = "A Discord Bot for 'whiter.lnstw.xyz', a Minecraft Server's bot. Developed By SamHacker"
+authors = [
+    {name = "SamHacker", email = "xux510208@gmail.com"},
+]
+dependencies = [
+    "discord-py==2.3.2",
+    "pyyaml==6.0.1",
+    "py-dactyl==2.0.4",
+    "mcstatus==11.1.1",
+    "requests==2.31.0",
+]
+requires-python = "==3.10.*"
+readme = "README.md"
+license = {text = "GPL-3.0-only"}
+
+
+[tool.pdm]
+distribution = false
+
+[tool.pdm.scripts]
+start = "python main.py"
+exp = "pdm export"
