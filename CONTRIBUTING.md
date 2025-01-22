@@ -1,133 +1,165 @@
-# ❤ 協助開發
+# ❤️ 協助開發
 
-非常感謝你願意協助本專案的開發，我由衷地感謝你！
+感謝你願意為 **CFBot** 貢獻力量！這份指南將幫助你順利參與開發，確保專案的品質與一致性。
 
-為本專案開發作貢獻是一件非常簡單的事，請照著以下貢獻的方法與規則操作！
+---
+---
 
 ## 🍽️ 建立分支
 
-在為專案開發時，請位你的編輯建立一個分支。以下是不錯的分支名稱建議：
+請在進行開發時，為你的變更建立 **獨立的分支**，避免直接提交到 `main` 分支。
 
-- **add-yaml-configure**：提及你的更新內容為協助建立YAML配置文件
-- **randomgames**：提及你的更新內容與一些小遊戲有關係
+### **✅ 良好分支命名範例**
+- `add-yaml-configure`：新增 YAML 配置功能。
+- `randomgames`：新增與隨機小遊戲相關的功能。
 
-以下是不好的範例
-- **master**：與常用於主要分支的內容重複，容易造成歧義
-- **add-some-game-for-some-players**：太長，不容易理解
+### **❌ 不建議的分支名稱**
+- `master`：容易與主分支混淆。
+- `add-some-game-for-some-players`：過長且不夠直觀。
 
-請將你所有的更新、貢獻與修改新增在你建立的分支中，不要提交到任何不相干的分支。並且在Pull Requst提交時請求合併你的分支，而非主要的main分支
+🔹 **請在 PR 提交時，請求合併到 `develop` 分支，而非 `main` 分支。**
 
-> [!CAUTION]
-> 不要提交任何變更到main分支，我不會為該分支的內容進行審核與研究。也不要在最後提交完成後再啟動開發分支，否則我也可能不進行處理或略過
+> ⚠️ **請勿直接對 `main` 提交變更！** `main` 分支僅用於正式發布，所有變更應先提交至 `develop` 進行審核。
 
-## 🧩 製作擴充工具
+---
 
-### Python 檔案規定
+## 🏗️ 修改內部組件的規則
 
-本專案採用 Discord.py 做開發，並使用 Cogs 架構保證專案的順暢與穩定。如果你想為機器人做更多擴充功能，請使用以下 Python Cogs 模板：
+若你要修改 核心組件，請遵守以下規範：
 
-```python
-# <擴充功能名稱>擴充功能
+- 確保變更有正當理由，例如修正錯誤、優化效能或增加通用性。
+- 對所有影響的區塊進行全面測試，避免破壞現有功能。
+- 避免破壞性變更（Breaking Changes），若無法避免，請提供遷移指南。
+- 遵循現有架構與風格指南，保持代碼一致性。
+- 提供詳細的變更紀錄，在 PR 中清楚描述修改內容。
+- 更新對應的文件與設定檔，確保其他開發者能理解你的改動。
+- 確保修改不影響現有的 CI/CD 流程，並通過所有測試。
 
-import discord
-from discord.ext import commands
-from discord import app_commands
-import logging
-import yaml
+## 🧩 擴充功能開發指南
 
-with open('cfg.yml', "r", encoding="utf-8") as file:
-    config = yaml.safe_load(file)
+### **📦 初始化開發環境**
 
-logger = logging.getLogger(__name__)
+本專案使用 **Discord.py** 進行開發，並採用 **Cogs 架構** 來確保模組化與穩定性。
 
-class MyExtension(commands.Cog):
-    # ...
-    pass
+1. 安裝 **PDM** 來管理依賴：
 
-async def setup(bot):
-    await bot.add_cog(MyExtension(bot))
-    logger.info("MyExtension 已經註冊")
-```
+   ```bash
+   pip install pdm
+   ```
 
-開發過程中請依照以下規定，以保證專案與擴充功能的一體性：
+2. 複製專案程式碼：
 
-- 名稱（模板中的`MyExtension`）請記得替換
-- `import`請全部置放在最上方，不要放在函式、Class或其他物件中
-- 請保證程式碼的可讀性，不要為變數、陣列或其他項目加密
-- 請保留一定的空間，讓使用者可以配置
-- 配置請新增在`cfg.yml`中，不要自行新增其他文件
-- 如果需要其他 Python Module，請記得寫進`requirements.txt`中
-- 請在適當的地方撰寫註解，方便其他人閱讀
-- 請盡力而為，我們感激你的貢獻！
+   ```bash
+   git clone https://github.com/510208/cfbot
+   cd cfbot
+   ```
 
-### 配置檔規定
+3. 安裝依賴：
 
-為了維持簡單的操作，請將配置項目安放在`cfg.yml`中，將以下代碼添加在配置檔最下方：
+   ```bash
+   pdm install
+   ```
 
-```yaml
-# ================================
-#  ○ <你模組的名稱>設定
-#  齒輪：<你模組的檔名>.py
-# ================================
-#
-myextension:
-  # 啟用
-  enabled: true
+🔹 **現在你就可以開始開發了！**
 
-  # ...
-```
+---
 
-麻煩依照以下說明設計，以維持專案一體性：
+### **📂 建立你的 Cog**
 
-- 配置檔的鍵名要有意義，請避免使用如`a`、`b`等無意義的鍵名
-- 請留下足夠的彈性給使用者，他們會很感激你的！
-- 請將上方的內容改成適合自己的
-- 請為配置鍵撰寫適合的註解，如果有 Placeholder 也請說明之
-- 預設值要有意義，不要亂寫
+1. **在 `cogs` 目錄下建立一個資料夾**，命名為你的功能名稱，例如 `my-awesome-project`。
+2. **在該資料夾內新增 `.py` 檔案**（與資料夾名稱相同），例如 `my-awesome-project.py`。
+3. **使用以下模板進行開發**：
 
-再次感謝，謝謝您的幫忙！
+   ```python
+   import logging
+   import discord
+   from discord.ext import commands
+   import yaml
 
-### 為擴充功能編寫說明
+   logger = logging.getLogger(__name__)
 
-請記得在寫完程式後做以下幾件事：
+   with open('cfg.yml', "r", encoding="utf-8") as file:
+       config = yaml.safe_load(file).get("my_awesome_cog", {})
 
-1. 在`readme.md`中，備註與謝誌位置主動放上你的大名，與你協助的內容，謝謝！（不填寫我們會協助填寫，不希望出現在上面請在PR告知）
-2. 手動在 ExtGuide 資料夾建立一個`你擴充功能檔名.md`的檔案用以撰寫你擴充功能的說明
-3. 如果你的擴充功能不需要預設啟動，或希望使用者自行決定是否啟動，請在檔名前加上`nl`兩字
-4. 如果你不知道讀我檔案可以放什麼，可以使用以下範本：
+   class MyAwesomeCog(commands.Cog):
+       def __init__(self, bot):
+           self.bot = bot
+
+       @commands.Cog.listener()
+       async def on_ready(self):
+           logger.info("MyAwesomeCog 已加載！")
+
+   async def setup(bot):
+       if not config.get("enabled", True):
+           logger.info("跳過載入 MyAwesomeCog，因為它被禁用。")
+           return
+       await bot.add_cog(MyAwesomeCog(bot))
+   ```
+
+4. **在 `cfg.yml` 中新增相應的設定項目**：
+
+   ```yaml
+   # ================================
+   #  📦 MyAwesomeCog 設定
+   # ================================
+   my_awesome_cog:
+     enabled: true  # 是否啟用此擴充功能
+   ```
+
+5. **最佳開發實踐**：
+   - 使用可讀性高的變數名稱，避免無意義名稱（如 `a`, `b`, `test123`）。
+   - 儘可能讓使用者可自訂功能設定。
+   - 避免硬編碼（Hardcoding），使用變數或設定檔管理常數。
+   - 需要額外的函式庫時，請更新 `pyproject.toml` 並在 PR 中註明。
+
+---
+
+## 📜 撰寫擴充功能文件
+
+請確保你的擴充功能有清晰的文件，讓其他人能夠輕鬆使用它。
+
+### **📖 `README.md` 範本**
+
+將以下內容放入你的 **擴充功能資料夾** 中：
 
 ```markdown
-# 我的擴充功能
+# 📦 MyAwesomeCog
 
-## ⓘ 關於擴充功能
-
+## 🔍 功能簡介
 - **作者**：SamHacker
 - **授權條款**：GNU/GPL v3
 
-## ⚙️ 配置
-
-\```
-# ================================
-#  ○ <你模組的名稱>設定
-#  齒輪：<你模組的檔名>.py
-# ================================
-#
-myextension:
-  # 啟用
-  enabled: true
-
+## ⚙️ 設定方式
+\```yaml
+my_awesome_cog:
+  enabled: true  # 啟用此功能
   # ...
 \```
 
-- `enabled`：啟用擴充功能
-- ...
+- `enabled`：是否啟用此擴充功能。
+
+## 🛠 指令列表
+- `!example`：示範指令。
 ```
+
+### **📌 其他文件注意事項**
+- 若你的功能 **預設不啟用**，請將 `enabled` 設為 `false`。
+- 若你的功能 **不適合內建啟用**，請將檔案名稱前綴為 `nl_`（例如 `nl_my_feature.py`）。
+
+---
 
 ## 🏋️ Pull Request 規則
 
-提出PR時請記得保持以下列舉的項目，我們會很樂意為你審核：
+當你準備提交 PR 時，請確保符合以下標準：
 
-- 請在[這裡](https://github.com/510208/yunyubot-dc-annou/pulls)提出PR
-- 請簡述你協助製作的功能與需要的資訊
-- 如果你先前有提Issue做建議，也請附上Issue的連結
-- 謝謝您的貢獻^^
+✅ **Pull Request 提交前檢查清單**：
+- [ ] **確認程式碼通過基本測試**，確保無錯誤。
+- [ ] **遵循 Python PEP8 規範**，確保程式碼格式清晰。
+- [ ] **提供清楚的 PR 標題與描述**。
+- [ ] **若修改現有功能，請提供相應的變更紀錄（Changelog）**。
+- [ ] **若有 Issue，請在 PR 中標註（例如 `Closes #123`）**。
+
+🔹 **提交 PR**：[GitHub Pull Requests](https://github.com/510208/cfbot/pulls)
+
+感謝你的貢獻！🚀
+
