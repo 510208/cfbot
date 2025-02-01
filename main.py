@@ -197,46 +197,37 @@ async def cog_list(ctx):
     if ctx.user.id not in BOT_ADMIN:
         await ctx.response.send_message('你沒有權限使用此機器人', ephemeral=True)
         return
-    # 遍覽Cogs資料夾，並取出所有可用Cogs，然後逐一檢查是否被啟用
-    logging.info('取得Cogs列表')
-    logging.info(f'請求發起人：{ctx.user}')
-    # cogs = []
-    # for filename in os.listdir('./cogs'):
-    #     if filename.endswith('.py'):
-    #         cogs.append(filename[:-3])
-        
-    # 取出已啟用的Cogs
-    # enabled_cogs = []
-    # for cog in cogs:
-    #     if cog in bot.cogs:
-    #         enabled_cogs.append(cog)
-    
-    # 回傳Embed訊息
+    # 檢查目前已啟用的Cog
+    cogs = []
+    for cog in bot.cogs:
+        cogs.append(cog)
+    # 檢查Cogs資料夾中的所有檔案，walk指令最多走入第一層子資料夾
+    cogs_files = []
+    for root, _, files in os.walk("./Cogs"):
+        for filename in files:
+            if filename.endswith(".py") and not filename.startswith("nl"):
+                relative_path = os.path.relpath(os.path.join(root, filename), "./")
+                module_name = relative_path.replace(os.sep, '.')[:-3]
+                cogs_files.append(module_name)
+    # 檢查Cogs資料夾中的子資料夾
+    cogs_folders = []
+    for root, dirs, _ in os.walk("./Cogs"):
+        for folder in dirs:
+            cogs_folders.append(folder)
+    # 合併所有Cogs
+    cogs_all = cogs + cogs_files + cogs_folders
+    # 輸出Cogs
     embed = discord.Embed(
         title='Cogs列表',
-        description='以下為所有Cogs列表',
-        color=discord.Color.blue()
+        description='以下為所有Cogs',
+        color=discord.Color.green()
     )
-    logging.info(f'已啟用的Cogs：{bot.cogs}')
-    for cog in bot.cogs:
+    for cog in cogs_all:
         embed.add_field(
             name=cog,
-            value='<:check:1254019091371397130> 已啟用',
+            value='已啟用' if cog in cogs else '未啟用',
             inline=False
         )
-    # 取得bot.cogs的所有鍵名（bot.cogs是一個字典）
-    all_cogs = bot.cogs.keys()
-    # 將all_cogs全部變小寫
-    all_cogs = [cog.lower() for cog in all_cogs]
-    for cog in os.listdir('./Cogs'):
-        if cog.endswith('.py'):
-            if cog[:-3] not in all_cogs:
-                embed.add_field(
-                    name=cog[:-3],
-                    value='<:dangerous:1254019093900558397> 未啟用',
-                    inline=False
-                )
-    embed.set_thumbnail(url="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Engranajesreductores.JPG/240px-Engranajesreductores.JPG")
     await ctx.response.send_message(embed=embed)
 
 # Enable Cog Command
@@ -258,9 +249,9 @@ async def enable_cog(ctx, cog: str):
     #     await load_extensions()
     try:
         # 檢查是否有該Cog
-        if os.path.isfile(f'./Cogs/{cog}.py') == False:
-            await ctx.response.send_message('找不到該Cog')
-            return
+        # if os.path.isfile(f'./Cogs/{cog}.py') == False:
+        #     await ctx.response.send_message('找不到該Cog')
+        #     return
         # 啟用Cog
         await bot.load_extension(f'Cogs.{cog}')
         await ctx.response.send_message(f'已啟用{cog}')
@@ -304,27 +295,9 @@ async def reload_cog(ctx, cog: str):
         await ctx.response.send_message('你沒有權限使用此機器人', ephemeral=True)
         return
     try:
-        # 檢查是否有該Cog
-        # 取得檔案絕對路徑
-        SELF_PATH = os.path.dirname(os.path.abspath(__file__))
-        logging.debug(f'檔案絕對路徑：{SELF_PATH}')
-        # 檢查使用者請求的Cog是否為子資料夾（如tickets/ticket）
-        if '/' in cog:
-            logging.debug('使用者請求的Cog為子資料夾')
-            # 取得子資料夾名稱
-            sub_cog = cog.split('/')[0]
-            logging.debug(f'子資料夾名稱：{sub_cog}')
-            # 檢查是否有該子資料夾
-            if os.path.isdir(f'./Cogs/{sub_cog}') == False:
-                await ctx.response.send_message('找不到該Cog')
-                return
-        # 檢查是否有該Cog
-        if not os.path.isfile(f'./Cogs/{cog}.py'):
-            logging.debug('使用者請求的Cog為子資料夾')
-            await ctx.response.send_message('找不到該Cog')
-            return
-        
-        # 重新載入Cog
+        # 卸載後載入Cog
+        # await bot.unload_extension(f'Cogs.{cog}')
+        # await bot.load_extension(f'Cogs.{cog}')
         await bot.reload_extension(f'Cogs.{cog}')
         await ctx.response.send_message(f'已重新載入{cog}')
     except Exception as e:
