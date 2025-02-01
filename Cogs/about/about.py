@@ -16,7 +16,9 @@ logger = logging.getLogger(__name__)
 
 COG_INTRO = {
     "name": "關於",
-    "description": "關於專案（不能移除）"
+    "description": "關於專案（不能移除）",
+    "author": "SamHacker",
+    "countributors": ["SamHacker"],
 }
 
 # 讀取設定檔

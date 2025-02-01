@@ -13,7 +13,9 @@ logger = logging.getLogger(__name__)
 
 COG_INTRO = {
     "name": "歡迎訊息",
-    "description": "歡迎新使用者加入 Discord 伺服器的訊息"
+    "description": "歡迎新使用者加入 Discord 伺服器的訊息",
+    "author": "SamHacker",
+    "countributors": ["SamHacker"],
 }
 
 class Welcome(commands.Cog):

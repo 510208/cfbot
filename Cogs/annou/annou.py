@@ -15,7 +15,9 @@ logger = logging.getLogger(__name__)
 
 COG_INTRO = {
     "name": "公告系統",
-    "description": "用於公告設定的擴充功能"
+    "description": "用於公告設定的擴充功能",
+    "author": "SamHacker",
+    "countributors": ["SamHacker"],
 }
 
 # 讀取設定檔

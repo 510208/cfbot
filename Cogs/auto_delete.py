@@ -13,7 +13,9 @@ logger = logging.getLogger(__name__)
 
 COG_INTRO = {
     "name": "自動刪除",
-    "description": "自動刪除指定頻道的多餘訊息（非本機器人與白名單的訊息）"
+    "description": "自動刪除指定頻道的多餘訊息（非本機器人與白名單的訊息）",
+    "author": "SamHacker",
+    "countributors": ["SamHacker"],
 }
 
 class Remove_Message(commands.Cog):

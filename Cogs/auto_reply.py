@@ -16,7 +16,9 @@ logger = logging.getLogger(__name__)
 
 COG_INTRO = {
     "name": "自動回覆",
-    "description": "自動回覆指定關鍵字的訊息"
+    "description": "自動回覆指定關鍵字的訊息",
+    "author": "SamHacker",
+    "countributors": ["SamHacker"],
 }
 
 class Auto_Reply(commands.Cog):

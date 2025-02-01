@@ -13,7 +13,9 @@ logger = logging.getLogger(__name__)
 
 COG_INTRO = {
     "name": "Discord 群組紀錄",
-    "description": "紀錄 Discord 群組的變更"
+    "description": "紀錄 Discord 群組的變更",
+    "author": "SamHacker",
+    "countributors": ["SamHacker"],
 }
 
 class DcLogging(commands.Cog):

@@ -18,7 +18,9 @@ logger = logging.getLogger(__name__)
 
 COG_INTRO = {
     "name": "玩家綁定搜尋",
-    "description": "搜尋經 DiscordSRV 插件綁定的玩家資訊，並以本地 SQLite 資料庫座快取"
+    "description": "搜尋經 DiscordSRV 插件綁定的玩家資訊，並以本地 SQLite 資料庫快取",
+    "author": "SamHacker",
+    "countributors": ["SamHacker"],
 }
 
 api = PterodactylClient(config["api_url"], config["api_key"], debug=True)
@@ -26,7 +28,7 @@ api = PterodactylClient(config["api_url"], config["api_key"], debug=True)
 class PteroSearch(commands.Cog):
     s = app_commands.Group(
         name = "search",
-        description = "查詢玩家資訊"
+        description = "查詢玩家資訊",
     )
 
     @s.command(

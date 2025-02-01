@@ -35,7 +35,9 @@ with open('data.json', "r", encoding="utf-8") as file:
 
 COG_INTRO = {
     "name": "客服單系統",
-    "description": "為伺服器新增客服單功能，由夜間部設計"
+    "description": "為伺服器新增客服單功能，由夜間部設計",
+    "author": "SamHacker",
+    "countributors": ["SamHacker", "!夜間部（woodypegasus_tw）"],
 }
 
 class MainMenu(discord.ui.View):

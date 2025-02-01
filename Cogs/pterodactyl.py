@@ -15,7 +15,9 @@ logger = logging.getLogger(__name__)
 
 COG_INTRO = {
     "name": "翼手龍面版輔助控制",
-    "description": "控制採用翼手龍面版（Pterdactyl）的伺服器"
+    "description": "控制採用翼手龍面版（Pterdactyl）的伺服器",
+    "author": "SamHacker",
+    "countributors": ["SamHacker"],
 }
 
 api = PterodactylClient(config["api_url"], config["api_key"])

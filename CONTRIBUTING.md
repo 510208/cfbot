@@ -71,27 +71,38 @@
 3. **使用以下模板進行開發**：
 
    ```python
+   # 匯入模組，請將模組統一於此匯入
    import logging
    import discord
    from discord.ext import commands
    import yaml
 
+   # 記錄檔系統，需要的除錯紀錄等請用logging模組輸出
    logger = logging.getLogger(__name__)
 
+   # 齒輪說明，為你開發的Cog寫說明文件
+   COG_INTRO = {
+       "name": "歡迎訊息",
+       "description": "歡迎新使用者加入 Discord 伺服器的訊息"
+   }
+
+   # 讀入配置文件，請確定在cfg.yml中建立一個新的類別，名稱與你的Cog相同。並將配置設定都放在該類別中，然後在此設定
    with open('cfg.yml', "r", encoding="utf-8") as file:
        config = yaml.safe_load(file).get("my_awesome_cog", {})
+      #                                  ^ 將此改成你的配置鍵名
 
+   # 主齒輪
    class MyAwesomeCog(commands.Cog):
        def __init__(self, bot):
            self.bot = bot
 
        @commands.Cog.listener()
        async def on_ready(self):
-           logger.info("MyAwesomeCog 已加載！")
+           logger.info(f"{COG_INTRO["name"]} 已加載！")
 
    async def setup(bot):
        if not config.get("enabled", True):
-           logger.info("跳過載入 MyAwesomeCog，因為它被禁用。")
+           logger.info(f"跳過載入 {COG_INTRO["name"]}，因為它被禁用。")
            return
        await bot.add_cog(MyAwesomeCog(bot))
    ```
@@ -104,6 +115,9 @@
    # ================================
    my_awesome_cog:
      enabled: true  # 是否啟用此擴充功能
+     # 其他配置設定，請在鍵後面加上說明，最好採用繁體中文撰寫
+     key: value
+     key2: value2
    ```
 
 5. **最佳開發實踐**：

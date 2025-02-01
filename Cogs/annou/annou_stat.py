@@ -17,7 +17,9 @@ logger = logging.getLogger(__name__)
 
 COG_INTRO = {
     "name": "維修狀態",
-    "description": "用以改變維修狀態"
+    "description": "用以改變維修狀態",
+    "author": "SamHacker",
+    "countributors": ["SamHacker"],
 }
 
 # 讀取設定檔
