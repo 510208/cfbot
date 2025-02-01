@@ -1,4 +1,0 @@
-cfg.yml filter=_config
-[filter "_config"]
-	smudge = sed '/\/\/#gitignore$/'d
-	clean = sed '/\/\/#gitignore$/'d
