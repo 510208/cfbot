@@ -5,7 +5,7 @@ from discord.ext import commands
 from discord import app_commands
 import logging
 import yaml
-from pydactyl import PterodactylClient
+# from pydactyl import PterodactylClient
 from plugins.discordcore import *
 from plugins.mcsm_client import mcsmClient
 import re
@@ -37,7 +37,10 @@ class PteroSearch(commands.Cog):
     )
     async def sync(self, interaction: discord.Interaction):
         """前往面板API下載並同步玩家資訊"""
-        dcs = dcSearcher(config["api_url"], config["api_key"], config["db_path"])
+        if not(mcsm_cfg["enabled"]):
+            dcs = dcSearcher(config["api_url"], config["api_key"], config["db_path"])
+        else:
+            dcs = mcsmClient(mcsm_cfg["api_url"], mcsm_cfg["api_key"], mcsm_cfg["db_path"])
         try:
             await dcs.syncDcsrv()
             await interaction.response.send_message("<a:INFO:1193029532739960943> | 同步完成")
@@ -165,7 +168,11 @@ class PteroSearch(commands.Cog):
             logger.info("PterSearch 模組排程同步功能已禁用，不執行同步任務")
             return
         logger.info("PterSearch 模組排程同步功能已啟用，正在執行同步任務")
-        dcs = dcSearcher(config["api_url"], config["api_key"], config["db_path"])
+        if not(mcsm_cfg["enabled"]):
+            dcs = dcSearcher(config["api_url"], config["api_key"], config["db_path"])
+        else:
+            dcs = mcsmClient(mcsm_cfg["api_url"], mcsm_cfg["api_key"], mcsm_cfg["db_path"])
+        # dcs = dcSearcher(config["api_url"], config["api_key"], config["db_path"])
         await dcs.syncDcsrv()
         logger.info("PterSearch 模組排程同步功能已完成同步任務")
 
