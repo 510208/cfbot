@@ -7,20 +7,55 @@ import aiohttp
 # 解析 Base64 的模組
 import base64
 import json
+import yaml
 import time
 import asyncio
 
 logger = logging.getLogger(__name__)
 
+with open('cfg.yml', "r", encoding="utf-8") as file:
+    config = yaml.safe_load(file)["ptersearch"]
+    server_id = config["server_id"]
+
 # 用 Discord ID 查詢玩家的 Minecraft 資訊的類別
 class dcSearcher:
+    """
+    用於查詢 Discord ID 和 Minecraft UUID 映射關係的類別。
+
+    Attributes
+    ----------
+    api : PterodactylClient
+        Pterodactyl API 客戶端。
+    db_path : str
+        SQLite 資料庫的路徑。
+    """
     def __init__(self, pt_url: str, pt_key: str, db_path: str):
+        """
+        初始化 dcSearcher 類別。
+
+        Parameters
+        ----------
+        pt_url : str
+            Pterodactyl API 的 URL。
+        pt_key : str
+            Pterodactyl API 的密鑰。
+        db_path : str
+            SQLite 資料庫的路徑。
+        """
         self.api = PterodactylClient(pt_url, pt_key)
         self.db_path = db_path
 
     def __getServerStat(self):
+        """
+        取得 DiscordSRV 資料
+
+        Returns
+        -----------
+        dict
+            DiscordSRV 資料
+        """
         try:
-            ct_response_item = self.api.client.servers.files.get_file_contents("bea94db6", "/plugins/DiscordSRV/accounts.aof")
+            ct_response_item = self.api.client.servers.files.get_file_contents(server_id, "/plugins/DiscordSRV/accounts.aof")
             ct = ct_response_item.text
             # 若取得資料為空，則引起錯誤
             if ct == "":
