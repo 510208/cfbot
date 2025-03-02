@@ -9,7 +9,6 @@ from pydactyl import PterodactylClient
 from plugins.discordcore import *
 import re
 from discord.ext import tasks
-import mineplayer as mp
 
 with open('cfg.yml', "r", encoding="utf-8") as file:
     config = yaml.safe_load(file)["ptersearch"]
