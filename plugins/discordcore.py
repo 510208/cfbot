@@ -59,7 +59,7 @@ class dcSearcher:
             ct = ct_response_item.text
             # 若取得資料為空，則引起錯誤
             if ct == "":
-                raise GetDiscordSRVDataFailed("取得 DiscordSRV 資料失敗：資料為空")
+                raise GetDiscordSRVDataFailed("取得 DiscordSRV 資料失敗或目前無人綁定：資料為空")
             # print(f"取得 DiscordSRV 資料成功，內容：\n{ct}")
             ct = ct.split("\n")
             # 格式：980016361906524181 ecfedf45-e28a-4533-9d62-597fd8abbff5

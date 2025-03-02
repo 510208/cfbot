@@ -7,11 +7,13 @@ import logging
 import yaml
 from pydactyl import PterodactylClient
 from plugins.discordcore import *
+from plugins.mcsm_client import mcsmClient
 import re
 from discord.ext import tasks
 
 with open('cfg.yml', "r", encoding="utf-8") as file:
     config = yaml.safe_load(file)["ptersearch"]
+    mcsm_cfg = yaml.safe_load(file)["mcsm"]
     taskCfg = config["upd_task"]
 
 logger = logging.getLogger(__name__)
@@ -22,8 +24,6 @@ COG_INTRO = {
     "author": "SamHacker",
     "countributors": ["SamHacker"],
 }
-
-api = PterodactylClient(config["api_url"], config["api_key"], debug=True)
 
 class PteroSearch(commands.Cog):
     s = app_commands.Group(
@@ -36,7 +36,7 @@ class PteroSearch(commands.Cog):
         description = "前往 Pterdactyl 伺服器下載並同步玩家資訊"
     )
     async def sync(self, interaction: discord.Interaction):
-        """前往 Pterdactyl 伺服器下載並同步玩家資訊"""
+        """前往面板API下載並同步玩家資訊"""
         dcs = dcSearcher(config["api_url"], config["api_key"], config["db_path"])
         try:
             await dcs.syncDcsrv()

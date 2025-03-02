@@ -241,9 +241,10 @@ dc_logging:
 mcsm: # 面板是否採用 MCSManager 面板，若是請開啟此選項，以方便pterodactyl.py和ptersearch.py正確解析數據
   enabled: false # 是否啟用 MCSManager 面板
 
-  api_url: "https://yourpanel.com" # MCSManager API 根目錄（面板位址）
-  api_key: "yourapikey.pastethere" # MCSManager API 金鑰，可照https://docs.baimoqilin.top/get_your_apikey 的說明取得
-  server_id: "abcdefgh" # 伺服器ID
+  api_url: "https://localhost:23333/api/" # MCSManager API 根目錄（面板位址），後面記得要加上"/api/"
+  api_key: "f783d2f9eb924e508a49ff2981e7e1c9" # MCSManager API 金鑰，可照https://docs.baimoqilin.top/get_your_apikey 的說明取得
+  daemon_id: "a0b6fe439e15424383b2cf0075efc8f3" # 守護進程ID，如"a0b6fe439e15424383b2cf0075efc8f3"
+  server_id: "ff8457ab7fb848b5998fd153c53f640c" # 伺服器ID，也就是實例ID，例如"ff8457ab7fb848b5998fd153c53f640c"
 
 # ================================
 #  ○ Pterodactyl API設定

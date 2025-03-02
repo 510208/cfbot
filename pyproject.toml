@@ -11,7 +11,6 @@ dependencies = [
     "py-dactyl==2.0.4",
     "mcstatus==11.1.1",
     "requests==2.31.0",
-    "baimomcsm-api>=0.0.6",
 ]
 requires-python = "==3.10.*"
 readme = "README.md"
