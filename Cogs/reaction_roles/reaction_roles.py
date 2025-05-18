@@ -23,26 +23,24 @@ COG_INTRO = {
     "countributors": ["SamHacker"],
 }
 
-with open('cfg.yml', "r", encoding="utf-8") as file:
-    config = yaml.safe_load(file).get("reaction_roles", {})
-    logger.info(f"載入 {COG_INTRO['name']} 設定：{config}")
-    reactions: list = config.get("reactions", [])
-    logger.info(f"載入 {COG_INTRO['name']} 設定：{reactions}")
-
 class ReactionRules(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.config = bot.config.get("reaction_roles", {})
+        logger.info(f"載入 {COG_INTRO['name']} 設定：{self.config}")
+        self.reactions: list = self.config.get("reactions", [])
+        logger.info(f"載入 {COG_INTRO['name']} 設定：{self.reactions}")
 
     @commands.Cog.listener()
     async def on_ready(self):
         logger.info(f"{COG_INTRO['name']} 已加載！")
         # 檢查目標訊息是否有設定的Emoji，若沒有就加上
-        message = await self.bot.get_channel(config.get("role_channel_id")).fetch_message(config.get("role_message_id"))
+        message = await self.bot.get_channel(self.config.get("role_channel_id")).fetch_message(self.config.get("role_message_id"))
         # 取得訊息中所有的Emoji
         msg_emoji = [reaction.emoji for reaction in message.reactions]
         logger.info(f"訊息中的 Emoji：{msg_emoji}")
         # 將reactions中所有項目的emoji鍵值取出
-        reaction_emojis = [entry["emoji"] for entry in reactions]
+        reaction_emojis = [entry["emoji"] for entry in self.reactions]
         logger.info(f"設定中的 Emoji：{reaction_emojis}")
         # 檢查設定的Emoji是否不存在
         # 檢查是否有缺少的Emoji
@@ -64,10 +62,10 @@ class ReactionRules(commands.Cog):
         if payload.user_id == self.bot.user.id:
             return
         # 檢查是否為指定的訊息
-        if payload.message_id != config.get("role_message_id"):
+        if payload.message_id != self.config.get("role_message_id"):
             return
         # 檢查是否為指定的Emoji
-        for reaction in reactions:
+        for reaction in self.reactions:
             if str(payload.emoji) == reaction["emoji"]:
                 # 取得身分組
                 guild = self.bot.get_guild(payload.guild_id)
@@ -86,13 +84,13 @@ class ReactionRules(commands.Cog):
         if payload.user_id == self.bot.user.id:
             return
         # 檢查是否為指定的訊息
-        if payload.message_id != config.get("role_message_id"):
+        if payload.message_id != self.config.get("role_message_id"):
             return
         # 檢查是否為指定的Emoji
-        for reaction in reactions:
+        for reaction in self.reactions:
             if str(payload.emoji) == reaction["emoji"]:
                 # 檢查配置檔是否啟用此項功能
-                if not config.get("remove_role_on_reaction_remove", False):
+                if not self.config.get("remove_role_on_reaction_remove", False):
                     return
                 # 取得身分組
                 guild = self.bot.get_guild(payload.guild_id)
@@ -104,7 +102,7 @@ class ReactionRules(commands.Cog):
                 break
 
 async def setup(bot):
-    if not config.get("enabled", True):
+    if not bot.config.get("reaction_roles", {}).get("enable", False):
         logger.info(f"跳過載入 {COG_INTRO['name']}，因為它被禁用。")
         return
     # logger.info(f"目前工作目錄：{os.getcwd()}")

@@ -1,5 +1,5 @@
-import discord
 import logging
+import discord
 from discord.ext import commands
 from discord.ext.commands import CommandNotFound, NoEntryPointError
 import os
@@ -7,9 +7,7 @@ import yaml
 import asyncio
 import platform
 import json
-# from Cogs.tickets.ticket import SELF_PATH
 import plugins.const_codes as const_codes
-import re
 
 # Project Version
 VERSION = '1.0.4'
@@ -27,18 +25,23 @@ logging.getLogger('asyncio').setLevel(logging.WARNING)
 logging.getLogger('json').setLevel(logging.WARNING)
 logging.getLogger('yaml').setLevel(logging.WARNING)
 
+# Bot
+bot = commands.Bot(command_prefix='sh!', intents=discord.Intents.all())
+
 with open('cfg.yml', 'r', encoding='utf-8') as f:
     cfg = yaml.load(f, Loader=yaml.FullLoader)
     logging.info('讀取cfg.yml成功！')
 
+bot.config = cfg
+
 if cfg['debug']:
     logging.getLogger().setLevel(logging.DEBUG)
-    logging.getLogger('discord').setLevel(logging.DEBUG)
-    logging.getLogger('logging').setLevel(logging.DEBUG)
-    logging.getLogger('plugins.const_codes').setLevel(logging.DEBUG)
-    logging.getLogger('asyncio').setLevel(logging.DEBUG)
-    logging.getLogger('json').setLevel(logging.DEBUG)
-    logging.getLogger('yaml').setLevel(logging.DEBUG)
+    # logging.getLogger('discord').setLevel(logging.DEBUG)
+    # logging.getLogger('logging').setLevel(logging.DEBUG)
+    # logging.getLogger('plugins.const_codes').setLevel(logging.DEBUG)
+    # logging.getLogger('asyncio').setLevel(logging.DEBUG)
+    # logging.getLogger('json').setLevel(logging.DEBUG)
+    # logging.getLogger('yaml').setLevel(logging.DEBUG)
     WARNING_MSG = """
 ____!___!___!___!___!___!___!___!___!____
 
@@ -66,9 +69,6 @@ if cfg is None:
 
 # 可以使用指令的使用者ID
 BOT_ADMIN = cfg["admin_id"]
-
-# Bot
-bot = commands.Bot(command_prefix='sh!', intents=discord.Intents.all())
 
 # 寫入已同步的指令
 async def write_slash_synced(slash: discord.app_commands.AppCommand):
@@ -412,15 +412,15 @@ async def load_extensions(bot):
                 module_name = relative_path.replace(os.sep, '.')[:-3]  # Convert to module path, and remove ".py".
                 try:
                     logging.info(f"載入 {relative_path} 中...")
+                    logging.getLogger(module_name).setLevel(logging.INFO)
                     await bot.load_extension(module_name)
                     logging.info(f"載入 {relative_path} 成功")
-                    logging.getLogger(module_name).setLevel(logging.INFO)
                 except NoEntryPointError as e:
                     logging.error(f"載入 {relative_path} 失敗，原因：無子程式加載切入點")
                     continue
-                except Exception as e:
-                    logging.error(f"載入 {relative_path} 失敗：{e}")
-                    continue
+                # except Exception as e:
+                #     logging.error(f"載入 {relative_path} 失敗：{e}")
+                #     continue
             else:
                 if filename.startswith("nl"):
                     logging.info(f"跳過 {filename}，原因：採用nl方式跳過載入")
@@ -492,5 +492,6 @@ if __name__ == "__main__":
         asyncio.run(close_bot())
         exit(0)
 else:
-    logging.error(f'請直接執行此 {__name__}.py 檔')
+    pass
+    # logging.error(f'請直接執行此 {__name__}.py 檔')
     # exit(1)

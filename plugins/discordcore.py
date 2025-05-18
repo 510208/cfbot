@@ -10,6 +10,7 @@ import json
 import yaml
 import time
 import asyncio
+from plugins.pprint_formatter import PPrintFormatter
 
 logger = logging.getLogger(__name__)
 

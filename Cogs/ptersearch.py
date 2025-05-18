@@ -12,9 +12,18 @@ import re
 from discord.ext import tasks
 
 with open('cfg.yml', "r", encoding="utf-8") as file:
-    config = yaml.safe_load(file)["ptersearch"]
-    mcsm_cfg = yaml.safe_load(file)["mcsm"]
-    taskCfg = config["upd_task"]
+    cfg_data = yaml.safe_load(file)
+    if cfg_data is None:
+        raise ValueError("配置文件讀取失敗或為空")
+    config = cfg_data.get("ptersearch")
+    mcsm_cfg = cfg_data.get("mcsm")
+    if config is None:
+        raise ValueError("配置文件中缺少 'ptersearch' 鍵")
+    if mcsm_cfg is None:
+        raise ValueError("配置文件中缺少 'mcsm' 鍵")
+    taskCfg = config.get("upd_task")
+    if taskCfg is None:
+        raise ValueError("配置文件中缺少 'upd_task' 鍵")
 
 logger = logging.getLogger(__name__)
 

@@ -285,7 +285,7 @@ ptersearch:
 #  齒輪：tickets/...
 # ================================
 tickets:
-  enabled: true # 是否啟用客服單系統
+  enabled: false # 是否啟用客服單系統
   remove_log_when_bot_launch: true # 機器人啟動時是否刪除客服單紀錄
   ticket_panel_id: 1327254407443775510 # 客服單面板頻道ID
   category_id: 1327254276753330196 # 客服單分類ID
@@ -396,7 +396,7 @@ auto_reply:
 #  齒輪：reaction_roles.py
 # ================================
 reaction_roles:
-  enabled: true # 是否啟用反應身分組
+  enabled: false # 是否啟用反應身分組
   role_message_id: 0000000000000000000 # 身分組訊息ID
   role_channel_id: 0000000000000000000 # 身分組訊息頻道ID
   remove_role_on_reaction_remove: true # 移除反應時是否移除身分組
