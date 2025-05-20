@@ -3,6 +3,7 @@
 感謝你願意為 **CFBot** 貢獻力量！這份指南將幫助你順利參與開發，確保專案的品質與一致性。
 
 ---
+
 ---
 
 ## 🍽️ 建立分支
@@ -10,10 +11,12 @@
 請在進行開發時，為你的變更建立 **獨立的分支**，避免直接提交到 `main` 分支。
 
 ### **✅ 良好分支命名範例**
+
 - `feature-add_yaml_configure`：新增 YAML 配置功能。
 - `feature-randomgames`：新增與隨機小遊戲相關的功能。
 
 ### **❌ 不建議的分支名稱**
+
 - `feature-master`：容易與主分支混淆。
 - `feature-add-some-game-for-some-players`：過長且不夠直觀。
 - `randomgames`：前面建議註明`feature`或`fix`等，說明這個分支的意義
@@ -87,22 +90,21 @@
        "description": "歡迎新使用者加入 Discord 伺服器的訊息"
    }
 
-   # 讀入配置文件，請確定在cfg.yml中建立一個新的類別，名稱與你的Cog相同。並將配置設定都放在該類別中，然後在此設定
-   with open('cfg.yml', "r", encoding="utf-8") as file:
-       config = yaml.safe_load(file).get("my_awesome_cog", {})
-      #                                  ^ 將此改成你的配置鍵名
-
    # 主齒輪
    class MyAwesomeCog(commands.Cog):
        def __init__(self, bot):
+           # 初始化機器人，config改從self.config取得
            self.bot = bot
+           self.config = bot.config.get("my_awesome_cog", {})
 
        @commands.Cog.listener()
        async def on_ready(self):
+           # 在擴充功能準備好時跳通知
            logger.info(f"{COG_INTRO["name"]} 已加載！")
 
    async def setup(bot):
-       if not config.get("enabled", True):
+       # 檢查這項擴充功能是否被啟動
+       if not bot.config.get("my_awesome_cog", {}).get("enabled", True):
            logger.info(f"跳過載入 {COG_INTRO["name"]}，因為它被禁用。")
            return
        await bot.add_cog(MyAwesomeCog(bot))
@@ -112,10 +114,11 @@
 
    ```yaml
    # ================================
-   #  📦 MyAwesomeCog 設定
+   #  ○ MyAwesomeCog 設定
+   #  齒輪：tickets/...
    # ================================
    my_awesome_cog:
-     enabled: true  # 是否啟用此擴充功能
+     enabled: true # 是否啟用此擴充功能
      # 其他配置設定，請在鍵後面加上說明，最好採用繁體中文撰寫
      key: value
      key2: value2
@@ -137,27 +140,33 @@
 
 將以下內容放入你的 **擴充功能資料夾** 中：
 
-```markdown
+````markdown
 # 📦 MyAwesomeCog
 
 ## 🔍 功能簡介
+
 - **作者**：SamHacker
 - **授權條款**：GNU/GPL v3
 
 ## ⚙️ 設定方式
+
 \```yaml
 my_awesome_cog:
-  enabled: true  # 啟用此功能
-  # ...
+enabled: true # 啟用此功能
+
+# ...
+
 \```
 
 - `enabled`：是否啟用此擴充功能。
 
 ## 🛠 指令列表
+
 - `!example`：示範指令。
-```
+````
 
 ### **📌 其他文件注意事項**
+
 - 若你的功能 **預設不啟用**，請將 `enabled` 設為 `false`。
 - 若你的功能 **不適合內建啟用**，請將檔案名稱前綴為 `nl_`（例如 `nl_my_feature.py`）。
 
@@ -168,6 +177,7 @@ my_awesome_cog:
 當你準備提交 PR 時，請確保符合以下標準：
 
 ✅ **Pull Request 提交前檢查清單**：
+
 - [ ] **確認程式碼通過基本測試**，確保無錯誤。
 - [ ] **遵循 Python PEP8 規範**，確保程式碼格式清晰。
 - [ ] **提供清楚的 PR 標題與描述**。
@@ -177,4 +187,3 @@ my_awesome_cog:
 🔹 **提交 PR**：[GitHub Pull Requests](https://github.com/510208/cfbot/pulls)
 
 感謝你的貢獻！🚀
-

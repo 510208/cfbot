@@ -142,6 +142,11 @@ ____________________________________________________
     for guild in bot.guilds:
         logging.info(f'{guild.name} (ID: {guild.id})')
     logging.info('------')
+    # 如果加入的伺服器超過一個，則顯示警告
+    if len(bot.guilds) > 1:
+        logging.warning('目前加入的伺服器超過一個，請注意！')
+        logging.warning('這可能會導致機器人運作不正常，請檢查伺服器設定')
+    logging.info('------')
     await bot.change_presence(activity=discord.Game(name='正在雲羽生存服搞事...'))
     # 檢查配置檔案版本
     logging.info('檢查配置檔案版本...')

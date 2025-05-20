@@ -403,3 +403,112 @@ reaction_roles:
   reactions: # 反應設定，使用清單模式來設定多個
     - emoji: "🎮" # 反應表情符號
       role_id: 0000000000000000000 # 身分組ID
+
+# ================================
+#  ○ 伺服器統計
+#  齒輪：serverstats/serverstats.py
+# ================================
+serverstats:
+  enabled: true # 是否啟用伺服器統計
+  loop_interval: 120 # 更新間隔（秒）
+  counters: # 統計項目
+    # 你可以使用以下Placeholder：
+    # {count} - 該項目計算出的結果
+    member: # 與成員有關的統計
+      all_members: # 所有成員數量
+        enabled: true # 是否啟用
+        channel_id: 1193435796900954162 # 頻道ID
+        channel_name: "所有成員：{count}" # 頻道名稱
+
+      online_members: # 在線成員數量
+        enabled: true # 是否啟用
+        channel_id: 1193435796900954162 # 頻道ID
+        channel_name: "線上成員：{count}" # 頻道名稱
+
+      offline_members: # 離線成員數量
+        enabled: true # 是否啟用
+        channel_id: 1193435796900954162 # 頻道ID
+        channel_name: "離線成員：{count}" # 頻道名稱
+
+      humans: # 人類成員數量
+        enabled: true # 是否啟用
+        channel_id: 1193435796900954162 # 頻道ID
+        channel_name: "人類成員：{count}" # 頻道名稱
+
+      bots: # 機器人成員數量
+        enabled: true # 是否啟用
+        channel_id: 1193435796900954162 # 頻道ID
+        channel_name: "機器人成員：{count}" # 頻道名稱
+
+      member_banned: # 被封鎖成員數量
+        enabled: true # 是否啟用
+        channel_id: 1193435796900954162 # 頻道ID
+        channel_name: "被封鎖成員：{count}" # 頻道名稱
+
+      member_no_role: # 沒有身分組成員數量
+        enabled: true # 是否啟用
+        channel_id: 1193435796900954162 # 頻道ID
+        channel_name: "沒有身分組成員：{count}" # 頻道名稱
+
+      member_with_role: # 有身分組成員數量
+        enabled: true # 是否啟用
+        roles:
+          - role_id: 1190290928112517212 # 身分組ID
+            channel_id: 1193435796900954162 # 頻道ID
+            channel_name: "有身分組xx成員：{count}" # 頻道名稱
+
+    guild: # 與伺服器有關的統計
+      guild_booster: # 伺服器加成人員數
+        enabled: true # 是否啟用
+        channel_id: 1193435796900954162 # 頻道ID
+        channel_name: "加成人數：{count}" # 頻道名稱
+
+      guild_boost_level: # 伺服器加成等級
+        enabled: true # 是否啟用
+        channel_id: 1193435796900954162 # 頻道ID
+        channel_name: "加成等級：{count}" # 頻道名稱
+
+      channels: # 頻道數量
+        enabled: true # 是否啟用
+        channel_id: 1193435796900954162 # 頻道ID
+        channel_name: "頻道數量：{count}" # 頻道名稱
+
+        text_channels: # 文字頻道數量
+          enabled: true # 是否啟用
+          channel_id: 1193435796900954162 # 頻道ID
+          channel_name: "文字頻道數量：{count}" # 頻道名稱
+
+        annou_channels: # 公告頻道數量
+          enabled: true # 是否啟用
+          channel_id: 1193435796900954162 # 頻道ID
+          channel_name: "公告頻道數量：{count}" # 頻道名稱
+
+        voice_channels: # 語音頻道數量
+          enabled: true # 是否啟用
+          channel_id: 1193435796900954162 # 頻道ID
+          channel_name: "語音頻道數量：{count}" # 頻道名稱
+
+        forum_channels: # 論壇頻道數量
+          enabled: true # 是否啟用
+          channel_id: 1193435796900954162 # 頻道ID
+          channel_name: "論壇頻道數量：{count}" # 頻道名稱
+
+        stage_channels: # 舞台頻道數量
+          enabled: true # 是否啟用
+          channel_id: 1193435796900954162 # 頻道ID
+          channel_name: "舞台頻道數量：{count}" # 頻道名稱
+
+      roles: # 身分組數量
+        enabled: true # 是否啟用
+        channel_id: 1193435796900954162 # 頻道ID
+        channel_name: "身分組：{count}" # 頻道名稱
+
+      emojis: # 表情符號數量
+        enabled: true # 是否啟用
+        channel_id: 1193435796900954162 # 頻道ID
+        channel_name: "表情符號：{count}" # 頻道名稱
+
+      stickers: # 貼圖數量
+        enabled: true # 是否啟用
+        channel_id: 1193435796900954162 # 頻道ID
+        channel_name: "貼圖數量：{count}" # 頻道名稱
