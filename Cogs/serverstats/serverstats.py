@@ -1,6 +1,7 @@
 import logging
 import discord
 from discord.ext import tasks, commands
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -12,6 +13,31 @@ COG_INTRO = {
 }
 
 class ServerStatus(commands.Cog):
+    """
+    伺服器狀態類別
+    在伺服器中的狀態類別建立多個頻道，並由機器人自動更新狀態，如人數、身分組數。
+    
+    Attributes:
+        bot (commands.Bot): 機器人實例
+        config (dict): 機器人配置
+        ct_config (dict): 計數器配置
+        update_status (tasks.Loop): 定時更新狀態的任務
+        last_update_time (str): 上次更新的時間
+        
+    Methods:
+        _update_channel_name(channel_id, channel_name_format, count, counter_name):
+            更新頻道名稱的函式
+        update_status():
+            定時更新伺服器狀態
+        before_update_status():
+            在更新狀態之前執行的函式
+        start_update_status(ctx):
+            開始更新伺服器狀態
+        stop_update_status(ctx):
+            停止更新伺服器狀態
+        check_update_status(ctx):
+            檢查伺服器狀態更新的狀態
+    """
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.config = bot.config.get("server_status", {})
@@ -23,6 +49,7 @@ class ServerStatus(commands.Cog):
             logger.warning(f"配置中的 interval ({interval}) 無效，將使用預設值 60 秒。")
             interval = 60
         self.update_status.change_interval(seconds=interval)  # 更新循環間隔
+        self.last_update_time = "Null"  # 記錄上次更新的時間
 
     # 將更新頻道的指令獨立成函式
     async def _update_channel_name(self, channel_id: int, channel_name_format: str, count: int, counter_name: str):
@@ -43,12 +70,15 @@ class ServerStatus(commands.Cog):
                 logger.warning(f"無法更新頻道 {channel.name} ({channel_id}) [{counter_name}] 的名稱，權限不足。")
             except discord.HTTPException as e:
                 logger.error(f"更新頻道 {channel.name} ({channel_id}) [{counter_name}] 時發生錯誤：{e}")
+        else:
+            logger.warning(f"找不到頻道 {channel_id}，無法更新名稱。")
 
-    
     # 定時更新狀態
     @tasks.loop(seconds=60)
     async def update_status(self):
         logger.info(f"開始更新伺服器狀態。")
+        start_time = time.time()
+
         # 取得伺服器資訊
         guild = self.bot.get_guild(self.bot.guilds[0].id)
 
@@ -422,12 +452,55 @@ class ServerStatus(commands.Cog):
             del stickers_config
             del stickers
 
-        logger.info(f"伺服器狀態更新完成。")
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        logger.info(f"更新伺服器狀態完成，共耗時 {elapsed_time:.2f} 秒。")
 
+        # 更新上次更新的時間
+        self.last_update_time = time.ctime(time.time())
+        
+        # 檢查最佳做法
+        if elapsed_time > 60:
+            logger.warning(f"更新伺服器狀態耗時過長：{elapsed_time:.2f} 秒，請檢查配置或伺服器狀態。")
+
+        if elapsed_time > self.update_status.interval:
+            logger.warning(f"更新伺服器狀態的時間 ({elapsed_time:.2f} 秒) 超過了設定的間隔 ({self.update_status.interval} 秒)，\n \
+                           如此在前次更新尚未結束時就將開始下次更新，並不是建議的最佳作法。\n \
+                           建議將loop_interval提升至更高的數值(如 {self.update_status.interval + 5} 秒以上)，或是將更新狀態的頻率降低。")
+    
     @update_status.before_loop
     async def before_update_status(self):
         await self.bot.wait_until_ready()
         logger.info(f"準備開始計時更新伺服器狀態。")
+
+    # 建立指令來啟動或停止更新狀態
+    g_update_status = commands.Group(name="update_status", description="更新伺服器狀態的指令")
+
+    @g_update_status.command(name="start", description="開始更新伺服器狀態")
+    async def start_update_status(self, ctx: commands.Context):
+        """開始更新伺服器狀態"""
+        if self.update_status.is_running():
+            await ctx.send("伺服器狀態更新已經在運行中。")
+        else:
+            self.update_status.start()
+            await ctx.send("伺服器狀態更新已開始。")
+
+    @g_update_status.command(name="stop", description="停止更新伺服器狀態")
+    async def stop_update_status(self, ctx: commands.Context):
+        """停止更新伺服器狀態"""
+        if self.update_status.is_running():
+            self.update_status.stop()
+            await ctx.send("伺服器狀態更新已停止。")
+        else:
+            await ctx.send("伺服器狀態更新尚未開始。")
+
+    @g_update_status.command(name="status", description="檢查伺服器狀態更新的狀態")
+    async def check_update_status(self, ctx: commands.Context):
+        """檢查伺服器狀態更新的狀態"""
+        if self.update_status.is_running():
+            await ctx.send("伺服器狀態更新正在運行中。")
+        else:
+            await ctx.send("伺服器狀態更新已停止。")
 
 async def setup(bot):
     if not bot.config.get("server_status", {}).get("enable", False):

@@ -411,6 +411,7 @@ reaction_roles:
 serverstats:
   enabled: true # 是否啟用伺服器統計
   loop_interval: 120 # 更新間隔（秒）
+  count_run_time: True # 是否計算運行時間
   counters: # 統計項目
     # 你可以使用以下Placeholder：
     # {count} - 該項目計算出的結果
