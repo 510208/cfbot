@@ -189,7 +189,7 @@ ____________________________________________________
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, CommandNotFound):
-        ctx.send('欸欸指令不存在', ephemeral=True)
+        await ctx.send('欸欸指令不存在', ephemeral=True)
         return
     raise error
 
@@ -241,10 +241,11 @@ async def cog_list(ctx):
     description='啟用指定的Cog'
 )
 async def enable_cog(ctx, cog: str):
+    await ctx.response.defer()
     logging.info('啟用Cogs')
     logging.info(f'請求發起人：{ctx.user}, 參數： cog={cog}')
     if ctx.user.id not in BOT_ADMIN:
-        await ctx.response.send_message('你沒有權限使用此機器人', ephemeral=True)
+        await ctx.followup.send('你沒有權限使用此機器人', ephemeral=True)
         return
     # if cog == '*':
     #     # 先卸載全部Cog
@@ -253,16 +254,11 @@ async def enable_cog(ctx, cog: str):
     #     # 啟用全部Cog
     #     await load_extensions()
     try:
-        # 檢查是否有該Cog
-        # if os.path.isfile(f'./Cogs/{cog}.py') == False:
-        #     await ctx.response.send_message('找不到該Cog')
-        #     return
-        # 啟用Cog
         await bot.load_extension(f'Cogs.{cog}')
-        await ctx.response.send_message(f'已啟用{cog}')
+        await ctx.followup.send(f'已啟用{cog}')
     except Exception as e:
         logging.error(f'發生錯誤：{e}')
-        await ctx.response.send_message(f'發生錯誤：{e}')
+        await ctx.followup.send(f'發生錯誤：{e}')
 
 # Disable Cog Command
 @bot.tree.command(
@@ -270,23 +266,24 @@ async def enable_cog(ctx, cog: str):
     description='停用指定的Cog'
 )
 async def disable_cog(ctx, cog: str):
+    await ctx.response.defer()
     logging.info('停用Cogs')
     logging.info(f'請求發起人：{ctx.user}, 參數： cog={cog}')
     if ctx.user.id not in BOT_ADMIN:
-        await ctx.response.send_message('你沒有權限使用此機器人', ephemeral=True)
+        await ctx.followup.send('你沒有權限使用此機器人', ephemeral=True)
         return
     try:
         # 檢查是否有該Cog
         if os.path.isfile(f'./Cogs/{cog}.py') == False:
-            await ctx.response.send_message('找不到該Cog')
+            await ctx.followup.send('找不到該Cog')
             return
         
         # 停用Cog
         await bot.unload_extension(f'Cogs.{cog}')
-        await ctx.response.send_message(f'已停用{cog}')
+        await ctx.followup.send(f'已停用{cog}')
     except Exception as e:
         logging.error(f'發生錯誤：{e}')
-        await ctx.response.send_message(f'發生錯誤：{e}')
+        await ctx.followup.send(f'發生錯誤：{e}')
 
 # Reload Cog Command
 @bot.tree.command(
@@ -294,23 +291,18 @@ async def disable_cog(ctx, cog: str):
     description='重新載入指定的Cog'
 )
 async def reload_cog(ctx, cog: str):
-    logging.info('熱重載Cogs')
-    logging.info(f'請求發起人：{ctx.user}, 參數： cog={cog}')
     if ctx.user.id not in BOT_ADMIN:
         await ctx.response.send_message('你沒有權限使用此機器人', ephemeral=True)
         return
+    await ctx.response.defer()  # 一進來就 defer
+    logging.info('熱重載Cogs')
+    logging.info(f'請求發起人：{ctx.user}, 參數： cog={cog}')
     try:
-        # 卸載後載入Cog
-        # await bot.unload_extension(f'Cogs.{cog}')
-        # await bot.load_extension(f'Cogs.{cog}')
         await bot.reload_extension(f'Cogs.{cog}')
-        await ctx.response.send_message(f'已重新載入{cog}')
+        await ctx.followup.send(f'已重新載入{cog}')
     except Exception as e:
         logging.error(f'發生錯誤：{e}')
-        if ctx.response.is_done():
-            await ctx.followup.send(f'發生錯誤：{e}')
-        else:
-            await ctx.response.send_message(f'發生錯誤：{e}')
+        await ctx.followup.send(f'發生錯誤：{e}')
 
 # Reload Admin Command
 @bot.tree.command(
@@ -403,13 +395,13 @@ async def sync(ctx):
             inline=False
         )
     embed.set_thumbnail(url="https://gravatar.com/avatar/f7598bd8d4aba38d7219341f81a162fc842376b3b556b1995cbb97271d9e2915?s=256")
-    # 正確的調用方式
     await mes.edit(content="完成同步！", embed=embed)
 
 # 一開始bot開機需載入全部程式檔案，並且跳過nl開頭的檔案。
 # 載入範圍包含Cogs資料夾與其子資料夾，但不包含子資料夾中的子資料夾。
 async def load_extensions(bot):
     """Loads cogs from the 'Cogs' directory and its subdirectories, skipping files starting with 'nl'."""
+    logging.info(os.walk("./Cogs").__next__())
     for root, _, files in os.walk("./Cogs"):
         for filename in files:
             if filename.endswith(".py") and not filename.startswith("nl"):
@@ -423,9 +415,9 @@ async def load_extensions(bot):
                 except NoEntryPointError as e:
                     logging.error(f"載入 {relative_path} 失敗，原因：無子程式加載切入點")
                     continue
-                # except Exception as e:
-                #     logging.error(f"載入 {relative_path} 失敗：{e}")
-                #     continue
+                except Exception as e:
+                    logging.error(f"載入 {relative_path} 失敗：{e}")
+                    continue
             else:
                 if filename.startswith("nl"):
                     logging.info(f"跳過 {filename}，原因：採用nl方式跳過載入")

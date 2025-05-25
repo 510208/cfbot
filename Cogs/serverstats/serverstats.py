@@ -2,6 +2,7 @@ import logging
 import discord
 from discord.ext import tasks, commands
 import time
+from discord import app_commands
 
 logger = logging.getLogger(__name__)
 
@@ -40,16 +41,19 @@ class ServerStatus(commands.Cog):
     """
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.config = bot.config.get("server_status", {})
-        logger.info(f"載入 {COG_INTRO['name']} 設定：{self.config}")
+        self.config = bot.config.get("serverstats", {})
+        # logger.info(f"載入 {COG_INTRO['name']} 設定：{self.config}")
+        logger.info(f"載入 {COG_INTRO['name']} 設定。")
         self.ct_config = self.config.get("counters", {})  # 取得所設定的計數器配置
         # 確保 interval 是一個有效的數字，預設為 60 秒
         interval = self.config.get("interval", 60)
         if not isinstance(interval, (int, float)) or interval <= 0:
             logger.warning(f"配置中的 interval ({interval}) 無效，將使用預設值 60 秒。")
             interval = 60
-        self.update_status.change_interval(seconds=interval)  # 更新循環間隔
         self.last_update_time = "Null"  # 記錄上次更新的時間
+        self._interval = interval  # 儲存原始間隔值
+        self.update_status.change_interval(seconds=self._interval)  # 更新循環間隔
+        self.update_status.start()
 
     # 將更新頻道的指令獨立成函式
     async def _update_channel_name(self, channel_id: int, channel_name_format: str, count: int, counter_name: str):
@@ -85,10 +89,11 @@ class ServerStatus(commands.Cog):
         # 取得與成員有關的統計配置
         member_config = self.ct_config.get("member", {})
         g_member = guild.members
+        logger.debug(f"更新伺服器 {guild.name} 的成員數量：{len(g_member)}")
         # 更新所有成員計數
         # （member下的all_members）
         all_members_config = member_config.get("all_members", {})
-        if all_members_config.get("enable", False):
+        if all_members_config.get("enabled", False):
             count = len(g_member)
             channel_id = all_members_config.get("channel_id")
             await self._update_channel_name(
@@ -97,16 +102,14 @@ class ServerStatus(commands.Cog):
                 count,
                 "all_members"
             )
-                
-            # 清理先前建立的變數，以減少記憶體使用量
-            del all_members_channel
-            del all_members_config
-            del all_members
+        else:
+            logger.debug(f"成員計數器 'all_members' 未啟用，跳過更新。")
 
+        logger.debug(f"更新線上成員計數。")
         # 更新線上成員計數
         # （member下的online_members）
         online_members_config = member_config.get("online_members", {})
-        if online_members_config.get("enable", False):
+        if online_members_config.get("enabled", False):
             count = sum(1 for member in g_member if member.status == discord.Status.online)
             channel_id = online_members_config.get("channel_id")
             await self._update_channel_name(
@@ -116,15 +119,15 @@ class ServerStatus(commands.Cog):
                 "online_members"
             )
 
-            # 清理先前建立的變數，以減少記憶體使用量
-            del online_members_channel
-            del online_members_config
-            del online_members
+            
+        else:
+            logger.debug(f"成員計數器 'online_members' 未啟用，跳過更新。")
         
+        logger.debug(f"更新離線成員計數。")
         # 更新離線成員計數
         # （member下的offline_members）
         offline_members_config = member_config.get("offline_members", {})
-        if offline_members_config.get("enable", False):
+        if offline_members_config.get("enabled", False):
             count = sum(1 for member in g_member if member.status == discord.Status.offline)
             channel_id = offline_members_config.get("channel_id")
             await self._update_channel_name(
@@ -134,15 +137,15 @@ class ServerStatus(commands.Cog):
                 "offline_members"
             )
 
-            # 清理先前建立的變數，以減少記憶體使用量
-            del offline_members_channel
-            del offline_members_config
-            del offline_members
+            
+        else:
+            logger.debug(f"成員計數器 'offline_members' 未啟用，跳過更新。")
 
+        logger.debug(f"更新離開成員計數。")
         # 更新人數計數
         # （member下的humans）
         humans_config = member_config.get("humans", {})
-        if humans_config.get("enable", False):
+        if humans_config.get("enabled", False):
             count = sum(1 for member in g_member if not member.bot)
             channel_id = humans_config.get("channel_id")
             await self._update_channel_name(
@@ -152,15 +155,15 @@ class ServerStatus(commands.Cog):
                 "humans"
             )
 
-            # 清理先前建立的變數，以減少記憶體使用量
-            del humans_channel
-            del humans_config
-            del humans
-                
+            
+        else:
+            logger.debug(f"成員計數器 'humans' 未啟用，跳過更新。")
+
+        logger.debug(f"更新機器人數量計數。")
         # 更新機器人數量計數
         # （member下的bots）
         bots_config = member_config.get("bots", {})
-        if bots_config.get("enable", False):
+        if bots_config.get("enabled", False):
             count = sum(1 for member in g_member if member.bot)
             channel_id = bots_config.get("channel_id")
             await self._update_channel_name(
@@ -170,15 +173,15 @@ class ServerStatus(commands.Cog):
                 "bots"
             )
 
-            # 清理先前建立的變數，以減少記憶體使用量
-            del bots_channel
-            del bots_config
-            del bots
+            
+        else:
+            logger.debug(f"成員計數器 'bots' 未啟用，跳過更新。")
 
+        logger.debug(f"更新被封鎖成員數量計數。")
         # 更新被封鎖（ban）的成員數量
         # （member下的banned_members）
         banned_members_config = member_config.get("member_banned", {})
-        if banned_members_config.get("enable", False):
+        if banned_members_config.get("enabled", False):
             count = len(await guild.bans())
             channel_id = banned_members_config.get("channel_id")
             await self._update_channel_name(
@@ -188,15 +191,15 @@ class ServerStatus(commands.Cog):
                 "member_banned"
             )
 
-            # 清理先前建立的變數，以減少記憶體使用量
-            del banned_members_channel
-            del banned_members_config
-            del banned_members
+            
+        else:
+            logger.debug(f"成員計數器 'member_banned' 未啟用，跳過更新。")
 
+        logger.debug(f"更新無身分組成員數量計數。")
         # 更新無身分組成員數量
         # （role下的member_no_role）
         no_role_config = self.ct_config.get("member_no_role", {})
-        if no_role_config.get("enable", False):
+        if no_role_config.get("enabled", False):
             count = sum(1 for member in g_member if not member.roles)
             channel_id = no_role_config.get("channel_id")
             await self._update_channel_name(
@@ -206,15 +209,15 @@ class ServerStatus(commands.Cog):
                 "member_no_role"
             )
 
-            # 清理先前建立的變數，以減少記憶體使用量
-            del no_role_channel
-            del no_role_config
-            del no_role_members
+            
+        else:
+            logger.debug(f"成員計數器 'member_no_role' 未啟用，跳過更新。")
         
+        logger.debug(f"更新擁有特定身分組的成員數量計數。")
         # 更新擁有特定身分組的成員數量
         # （role下的member_with_role）
         role_config = self.ct_config.get("member_with_role", {})
-        if role_config.get("enable", False):
+        if role_config.get("enabled", False):
             # 檢查role鍵（裡面是清單，
             # 例如：[
             #    {
@@ -241,21 +244,22 @@ class ServerStatus(commands.Cog):
                                 f"member_with_role:{role_obj.name}"
                             )
                             
-                            # 清理先前建立的變數，以減少記憶體使用量
-                            del channel
-                            del members_with_role
+                            
                         else:
                             logger.warning(f"找不到身分組 {role['role_id']}。")
                     else:
                         logger.warning(f"角色配置不正確，缺少 role_id 或 channel_id。")
+        else:
+            logger.debug(f"成員計數器 'member_with_role' 未啟用，跳過更新。")
 
         # 取得與伺服器有關的統計配置
         guild_config = self.ct_config.get("guild", {})
 
+        logger.debug(f"更新加成者數量。")
         # 更新伺服器加成者數量
         # （guild下的guild_booster）
         booster_config = guild_config.get("guild_booster", {})
-        if booster_config.get("enable", False):
+        if booster_config.get("enabled", False):
             count = guild.premium_subscription_count
             channel_id = booster_config.get("channel_id")
             await self._update_channel_name(
@@ -265,15 +269,15 @@ class ServerStatus(commands.Cog):
                 "guild_booster"
             )
 
-            # 清理先前建立的變數，以減少記憶體使用量
-            del booster_channel
-            del booster_config
-            del booster
+            
+        else:
+            logger.debug(f"伺服器計數器 'guild_booster' 未啟用，跳過更新。")
 
-        # 更新伺服器成員數量
+        logger.debug(f"更新伺服器加成者等級。")
+        # 更新伺服器加成者等級
         # （guild下的guild_boost_level）
         boost_level_config = guild_config.get("guild_boost_level", {})
-        if boost_level_config.get("enable", False):
+        if boost_level_config.get("enabled", False):
             count = guild.premium_tier
             channel_id = boost_level_config.get("channel_id")
             await self._update_channel_name(
@@ -283,15 +287,15 @@ class ServerStatus(commands.Cog):
                 "guild_boost_level"
             )
 
-            # 清理先前建立的變數，以減少記憶體使用量
-            del boost_level_channel
-            del boost_level_config
-            del boost_level
+            
+        else:
+            logger.debug(f"伺服器計數器 'guild_boost_level' 未啟用，跳過更新。")
 
+        logger.debug(f"更新伺服器頻道數量。")
         # 更新伺服器頻道數量
         # （guild下的channels）
         channels_config = guild_config.get("channels", {})
-        if channels_config.get("enable", False):
+        if channels_config.get("enabled", False):
             count = len(guild.channels)
             channel_id = channels_config.get("channel_id")
             await self._update_channel_name(
@@ -300,16 +304,14 @@ class ServerStatus(commands.Cog):
                 count,
                 "channels"
             )
+        else:
+            logger.debug(f"伺服器計數器 'channels' 未啟用，跳過更新。")
 
-            # 清理先前建立的變數，以減少記憶體使用量
-            del channels_channel
-            del channels_config
-            del channels
-
+        logger.debug(f"更新伺服器文字頻道數量。")
         # 更新伺服器文字頻道數量
         # （guild下的channels中的text_channels）
         text_channels_config = guild_config.get("channels", {}).get("text_channels", {})
-        if text_channels_config.get("enable", False):
+        if text_channels_config.get("enabled", False):
             count = len([channel for channel in guild.text_channels if not channel.is_news()])
             channel_id = text_channels_config.get("channel_id")
             await self._update_channel_name(
@@ -318,16 +320,14 @@ class ServerStatus(commands.Cog):
                 count,
                 "text_channels"
             )
+        else:
+            logger.debug(f"伺服器計數器 'text_channels' 未啟用，跳過更新。")
 
-            # 清理先前建立的變數，以減少記憶體使用量
-            del text_channels_channel
-            del text_channels_config
-            del text_channels
-        
+        logger.debug(f"更新伺服器公告頻道數量。")
         # 更新伺服器公告頻道數量
         # （guild下的channels中的annou_channels）
         annou_channels_config = guild_config.get("channels", {}).get("annou_channels", {})
-        if annou_channels_config.get("enable", False):
+        if annou_channels_config.get("enabled", False):
             # 獲取伺服器公告頻道數量，公告頻道由文字頻道中is_news()回傳True的頻道組成
             # 這裡的is_news()是discord.py中的一個方法，用於檢查頻道是否為公告頻道
             count = len([channel for channel in guild.text_channels if channel.is_news()])
@@ -338,16 +338,14 @@ class ServerStatus(commands.Cog):
                 count,
                 "annou_channels"
             )
+        else:
+            logger.debug(f"伺服器計數器 'annou_channels' 未啟用，跳過更新。")
 
-            # 清理先前建立的變數，以減少記憶體使用量
-            del annou_channels_channel
-            del annou_channels_config
-            del annou_channels
-
+        logger.debug(f"更新伺服器語音頻道數量。")
         # 更新伺服器語音頻道數量
         # （guild下的channels中的voice_channels）
         voice_channels_config = guild_config.get("channels", {}).get("voice_channels", {})
-        if voice_channels_config.get("enable", False):
+        if voice_channels_config.get("enabled", False):
             count = len(guild.voice_channels)
             channel_id = voice_channels_config.get("channel_id")
             await self._update_channel_name(
@@ -356,16 +354,14 @@ class ServerStatus(commands.Cog):
                 count,
                 "voice_channels"
             )
-
-            # 清理先前建立的變數，以減少記憶體使用量
-            del voice_channels_channel
-            del voice_channels_config
-            del voice_channels
-
+        else:
+            logger.debug(f"伺服器計數器 'voice_channels' 未啟用，跳過更新。")
+        
+        logger.debug(f"更新伺服器論壇頻道數量。")
         # 更新伺服器論壇頻道數量
         # （guild下的channels中的forum_channels）
         forum_channels_config = guild_config.get("channels", {}).get("forum_channels", {})
-        if forum_channels_config.get("enable", False):
+        if forum_channels_config.get("enabled", False):
             count = len(guild.voice_channels)
             channel_id = forum_channels_config.get("channel_id")
             await self._update_channel_name(
@@ -374,16 +370,15 @@ class ServerStatus(commands.Cog):
                 count,
                 "forum_channels"
             )
+            
+        else:
+            logger.debug(f"伺服器計數器 'forum_channels' 未啟用，跳過更新。")
 
-            # 清理先前建立的變數，以減少記憶體使用量
-            del forum_channels_channel
-            del forum_channels_config
-            del forum_channels
-
+        logger.debug(f"更新伺服器舞台頻道數量。")
         # 更新伺服器舞台頻道數量
         # （guild下的channels中的stage_channels）
         stage_channels_config = guild_config.get("channels", {}).get("stage_channels", {})
-        if stage_channels_config.get("enable", False):
+        if stage_channels_config.get("enabled", False):
             count = len(guild.stage_channels)
             channel_id = stage_channels_config.get("channel_id")
             await self._update_channel_name(
@@ -392,16 +387,14 @@ class ServerStatus(commands.Cog):
                 count,
                 "stage_channels"
             )
+        else:
+            logger.debug(f"伺服器計數器 'stage_channels' 未啟用，跳過更新。")
 
-            # 清理先前建立的變數，以減少記憶體使用量
-            del stage_channels_channel
-            del stage_channels_config
-            del stage_channels
-
+        logger.debug(f"更新伺服器身分組數量。")
         # 更新伺服器身分組數量
         # （guild下的roles）
         roles_config = guild_config.get("roles", {})
-        if roles_config.get("enable", False):
+        if roles_config.get("enabled", False):
             count = len(guild.roles)
             channel_id = roles_config.get("channel_id")
             await self._update_channel_name(
@@ -410,16 +403,14 @@ class ServerStatus(commands.Cog):
                 count,
                 "roles"
             )
+        else:
+            logger.debug(f"伺服器計數器 'roles' 未啟用，跳過更新。")
 
-            # 清理先前建立的變數，以減少記憶體使用量
-            del roles_channel
-            del roles_config
-            del roles
-
+        logger.debug(f"更新伺服器表情符號數量。")
         # 更新伺服器擁有的表情符號數量
         # （guild下的emojis）
         emojis_config = guild_config.get("emojis", {})
-        if emojis_config.get("enable", False):
+        if emojis_config.get("enabled", False):
             count = len(guild.emojis)
             channel_id = emojis_config.get("channel_id")
             await self._update_channel_name(
@@ -428,16 +419,14 @@ class ServerStatus(commands.Cog):
                 count,
                 "emojis"
             )
+        else:
+            logger.debug(f"伺服器計數器 'emojis' 未啟用，跳過更新。")
 
-            # 清理先前建立的變數，以減少記憶體使用量
-            del emojis_channel
-            del emojis_config
-            del emojis
-
+        logger.debug(f"更新伺服器貼圖數量。")
         # 更新伺服器貼圖數量
         # （guild下的stickers）
         stickers_config = guild_config.get("stickers", {})
-        if stickers_config.get("enable", False):
+        if stickers_config.get("enabled", False):
             count = len(guild.stickers)
             channel_id = stickers_config.get("channel_id")
             await self._update_channel_name(
@@ -446,12 +435,8 @@ class ServerStatus(commands.Cog):
                 count,
                 "stickers"
             )
-
-            # 清理先前建立的變數，以減少記憶體使用量
-            del stickers_channel
-            del stickers_config
-            del stickers
-
+        else:
+            logger.debug(f"伺服器計數器 'stickers' 未啟用，跳過更新。")
         end_time = time.time()
         elapsed_time = end_time - start_time
         logger.info(f"更新伺服器狀態完成，共耗時 {elapsed_time:.2f} 秒。")
@@ -463,18 +448,47 @@ class ServerStatus(commands.Cog):
         if elapsed_time > 60:
             logger.warning(f"更新伺服器狀態耗時過長：{elapsed_time:.2f} 秒，請檢查配置或伺服器狀態。")
 
-        if elapsed_time > self.update_status.interval:
-            logger.warning(f"更新伺服器狀態的時間 ({elapsed_time:.2f} 秒) 超過了設定的間隔 ({self.update_status.interval} 秒)，\n \
+        if elapsed_time > self._interval:
+            logger.warning(f"更新伺服器狀態的時間 ({elapsed_time:.2f} 秒) 超過了設定的間隔 ({self._interval} 秒)，\n \
                            如此在前次更新尚未結束時就將開始下次更新，並不是建議的最佳作法。\n \
-                           建議將loop_interval提升至更高的數值(如 {self.update_status.interval + 5} 秒以上)，或是將更新狀態的頻率降低。")
-    
+                           建議將loop_interval提升至更高的數值(如 {self._interval + 5} 秒以上)，或是將更新狀態的頻率降低。")
+
+    def cog_unload(self):
+        """當 Cog 被卸載時停止更新狀態"""
+        if self.update_status.is_running():
+            self.update_status.cancel()
+            logger.info(f"{COG_INTRO['name']} 已停止，定時更新伺服器狀態已停止。")
+        else:
+            logger.info(f"{COG_INTRO['name']} 已卸載，定時更新伺服器狀態未在運行中。")
+
     @update_status.before_loop
     async def before_update_status(self):
         await self.bot.wait_until_ready()
         logger.info(f"準備開始計時更新伺服器狀態。")
 
     # 建立指令來啟動或停止更新狀態
-    g_update_status = commands.Group(name="update_status", description="更新伺服器狀態的指令")
+    g_update_status = app_commands.Group(name="update_status", description="更新伺服器狀態的指令")
+
+    @g_update_status.command(name="run", description="手動執行更新伺服器狀態")
+    async def run_update_status(self, ctx: commands.Context):
+        """手動執行更新伺服器狀態"""
+        await self.update_status()
+        await ctx.send("伺服器狀態更新已手動執行。")
+        logger.info(f"手動執行更新伺服器狀態。")
+
+    # 準備好時自動開始更新狀態
+    @commands.Cog.listener()
+    async def on_ready(self):
+        """當機器人準備好時自動開始更新伺服器狀態"""
+        if not self.config.get("enabled", True):
+            logger.info(f"跳過自動啟動 {COG_INTRO['name']}，因為它被禁用。")
+            return
+
+        if not self.update_status.is_running():
+            self.update_status.start()
+            logger.info(f"{COG_INTRO['name']} 已啟動，開始定時更新伺服器狀態。")
+        else:
+            logger.info(f"{COG_INTRO['name']} 已經在運行中。")
 
     @g_update_status.command(name="start", description="開始更新伺服器狀態")
     async def start_update_status(self, ctx: commands.Context):
@@ -503,7 +517,7 @@ class ServerStatus(commands.Cog):
             await ctx.send("伺服器狀態更新已停止。")
 
 async def setup(bot):
-    if not bot.config.get("server_status", {}).get("enable", False):
+    if not bot.config.get("serverstats", {}).get("enabled", False):
         logger.info(f"跳過載入 {COG_INTRO['name']}，因為它被禁用。")
         return
     # logger.info(f"目前工作目錄：{os.getcwd()}")
