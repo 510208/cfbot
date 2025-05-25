@@ -6,6 +6,7 @@ from discord import app_commands
 import logging
 import yaml
 from pydactyl import PterodactylClient
+from mcsmapi import MCSMAPI
 
 logging.getLogger('pydactyl').setLevel(logging.INFO)
 logger = logging.getLogger(__name__)

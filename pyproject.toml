@@ -15,11 +15,3 @@ dependencies = [
 requires-python = "==3.10.*"
 readme = "README.md"
 license = {text = "GPL-3.0-only"}
-
-
-[tool.pdm]
-distribution = false
-
-[tool.pdm.scripts]
-start = "python main.py"
-exp = "pdm export"
