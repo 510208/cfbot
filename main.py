@@ -10,7 +10,7 @@ import json
 import plugins.const_codes as const_codes
 
 # Project Version
-VERSION = '1.0.4'
+VERSION = '1.0.5'
 
 # Logging
 logging.basicConfig(
@@ -431,7 +431,11 @@ try:
         logging.info('讀取TOKEN成功！')
         # logging.info(TOKEN)
 except FileNotFoundError:
-    logging.error('找不到 TOKEN.txt！請照 README.md 的步驟取得 TOKEN 並建立該文件')
+    logging.warn('找不到 TOKEN.txt！請照 README.md 的步驟取得 TOKEN 並建立該文件')
+    # 如果找不到檔案，就尋找環境變數CFBOT_TOKEN
+    TOKEN = os.getenv('CFBOT_TOKEN')
+    if TOKEN is None:
+        logging.error('找不到 CFBOT_TOKEN 環境變數，請照 README.md 的步驟取得 TOKEN 或設定環境變數`CFBOT_TOKEN`')
     exit(1)
 # TOKEN = cfg['TOKEN']
 # if TOKEN == '' or TOKEN == 'yourTOKEN.pastethere':
